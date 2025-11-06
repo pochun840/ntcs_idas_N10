@@ -1,0 +1,350 @@
+<?php
+class Jobs extends Controller
+{
+    private $jobModel;
+    private $DashboardModel;
+    private $ToolModel;
+    private $SettingModel;
+    private $MiscellaneousModel;
+
+
+    // 在建構子中將 Post 物件（Model）實例化
+    public function __construct()
+    {
+        $this->jobModel = $this->model('Job');
+        $this->DashboardModel = $this->model('Dashboard');
+        $this->MiscellaneousModel = $this->model('Miscellaneous');
+    }
+
+    // 取得所有Jobs
+    public function index(){
+        $data = array();
+
+        $isMobile  = $this->isMobileCheck();
+        $jobs      = $this->jobModel->getJobs();
+
+
+        $direction = $this->MiscellaneousModel->details('reverse_direction');
+
+        // 取得下個可用的 job_id
+        $next_job_id_arr = $this->jobModel->get_head_job_id();
+        $next_job_id = (int)$next_job_id_arr['missing_id'];
+
+        // 避開 0 與 221
+        $invalid_ids = [0, 221];
+        while (in_array($next_job_id, $invalid_ids)) {
+            $next_job_id++;
+        }
+
+        // 計算 jobIdInt
+        if (!empty($jobs)) {
+            $lastRow  = end($jobs);
+            $jobIdInt = intval($lastRow['JOBID']) + 1;
+        } else {
+            $lastRow  = 1;
+            $jobIdInt = 1;
+        }
+
+        $data = array(
+            'jobint' => $jobIdInt,
+            'jobs' => $jobs,
+            'next_job_id' => $next_job_id,
+        );
+
+        if ($isMobile) {
+            $this->view('jobs/job_management_m', $data);
+        } else {
+            $this->view('jobs/job_management', $data);
+        }
+    }
+
+
+
+
+    #create 
+    public function create_job(){
+
+        $file = $this->MiscellaneousModel->lang_load();
+        if(!empty($file)){
+            include $file;
+        }
+
+        if(isset($_POST['jobidnew'])){
+            $jobName = $_POST['jobname_val'];
+            $validationResult = $this->MiscellaneousModel->validateName($jobName); 
+            if ($validationResult === true) {
+                $jobdata = array(
+                    'job_id' => $_POST['jobidnew'],
+                    'job_name' => $jobName,
+                    'type' => 1,
+                    'time' =>  date('Y-m-d H:i:s'),
+                    'act' => 0,
+                    'ok_job' => $_POST['job_ok_val'],
+                    'ok_job_stop' => $_POST['stop_job_ok_val'],
+                    'output_unified' => 0,
+                    'input_unified'  => 0
+                    
+                );
+            }
+      
+            $job_count = $this->jobModel->countjob();
+            if($job_count >= 100) {
+                $this->MiscellaneousModel->generateErrorResponse('Error', $error_message['job_id']);
+                exit();
+            }
+    
+            $res = $this->jobModel->create_job($jobdata);
+            $result = array();
+            
+            $success_text ='';
+            
+            if ($res) {
+                $res_msg  = $text['New']." ".$text['job_id'].':'. $jobdata['job_id']." ".$success_text;
+                $this->MiscellaneousModel->generateErrorResponse('Success', $res_msg);
+            } else {
+                $res_msg  = $text['New']." ".$text['job_id'].':'. $jobdata['job_id']." ".$fail_text;
+                $this->MiscellaneousModel->generateErrorResponse('Error', $res_msg);
+            }
+                      
+        }
+    }
+
+    public function update_job(){
+
+        $file = $this->MiscellaneousModel->lang_load();
+        if(!empty($file)){
+            include $file;
+        }
+
+        $jobdata  = array();
+        if(isset($_POST['jobid'])){
+
+            $jobdata = array(
+                'job_id' => $_POST['jobid'],
+                'job_name' => $_POST['jobname'],
+                'ok_job' => $_POST['jobokValue'],
+                'ok_job_stop' => $_POST['stopjobValue']
+
+            );
+
+            $res = $this->jobModel->update_job_by_id($jobdata);
+            $result = array();
+            if($res){
+                $res_msg = $text['Edit']."  ".$text['job_id'].':'. $jobdata['job_id']."  ".$text['success'];
+                $this->MiscellaneousModel->generateErrorResponse('Succes', $res_msg );
+            }else{
+                $res_msg = $text['Edit']."  ".$text['job_id'].':'. $jobdata['job_id']."  ".$text['fail'];
+                $this->MiscellaneousModel->generateErrorResponse('Error', $res_msg );
+            }
+
+        } 
+    
+    }
+
+    #delete 
+    public function delete_jobid() {
+
+        $file = $this->MiscellaneousModel->lang_load();
+        if(!empty($file)){
+            include $file;
+        }
+ 
+        $jobid = $_POST['jobid'] ?? null;
+
+        if(!empty($jobid)){
+
+            $res = $this->jobModel->delete_job_by_id($jobid);
+            $ans = $this->jobModel->delete_sequence_by_job_id($jobid);
+            $an1 = $this->jobModel->delete_step_by_job_id($jobid);
+            $an2 = $this->jobModel->delete_input_by_job_id($jobid);
+            $an3 = $this->jobModel->delete_output_by_job_id($jobid);
+
+            $result = array();
+            if($res){
+                $res_msg = $text['Delete']."  ".$text['job_id'].':'. $jobid."  ".$text['success'];
+                $this->MiscellaneousModel->generateErrorResponse('Success', $res_msg );
+            }else{
+                $res_msg = $text['Delete']."  ".$text['job_id'].':'. $jobid."  ".$text['fail'];
+                $this->MiscellaneousModel->generateErrorResponse('Error', $res_msg );
+            }
+
+        }
+   
+    }
+
+    public function search_job($jobid){
+        $jobid = $_POST['jobid'] ?? null;
+        if(!empty($jobid)){
+            $res  = $this->jobModel->search_jobinfo($jobid);
+            print_r($res);
+        }
+    }
+
+    public function check_job_type(){
+        $jobid = $_POST['new_jobid'] ?? null;
+        if(!empty($jobid)){
+            $res  = $this->jobModel->job_id_repeat($jobid);
+            echo  $res;
+        }
+        
+    }
+
+    #copy 
+    public function copy_job_data(){
+
+        $file = $this->MiscellaneousModel->lang_load();
+        if(!empty($file)){
+            include $file;
+        }
+
+        $old_jobid   = $_POST['old_jobid'] ?? null;
+        $old_jobname = $_POST['old_jobname'] ?? null;
+        $new_jobid   = $_POST['new_jobid'] ?? null;
+        $new_jobname = $_POST['new_jobname'] ?? null;
+
+        if(!empty($old_jobid)){
+            $job_count = $this->jobModel->countjob();
+            if($job_count >= 100) {
+                $this->MiscellaneousModel->generateErrorResponse('Error', $error_message['job_id']);
+                exit();
+            }else{
+           
+                $old_res = $this->jobModel->search_jobinfo($old_jobid);
+
+                $this->jobModel->del_job_type($new_jobid);
+                $this->jobModel->del_seq_type($new_jobid);
+                $this->jobModel->del_step_type($new_jobid);
+         
+                if(!empty($old_res)){
+
+                    #取得 unscrew_power && 	unscrew_rpm && unscrew_direction
+                    $jobdata = array(
+                        'job_id'      => $_POST['new_jobid'],
+                        'job_name'    => $_POST['new_jobname'],
+                        'ok_job'      => $old_res['ok_job'],
+                        'ok_job_stop' => $old_res['ok_job_stop']
+
+                    );
+
+                    $res = $this->jobModel->create_job($jobdata);
+                    //用job_id 找出對應的seq && step
+                    $select_seq  = $this->jobModel->search_seqinfo($old_jobid); 
+                    $select_step = $this->jobModel->search_stepnfo($old_jobid); 
+                    
+                    if(!empty($select_seq)){
+
+                        $new_temp_seq = array();
+                        foreach($select_seq as $key =>$val){
+                 
+                            $new_temp_seq[$key]['JOBID'] = $new_jobid;
+                            $new_temp_seq[$key]['SEQID'] = $val['SEQID'];
+                            $new_temp_seq[$key]['SEQname'] = $val['SEQname'];
+                            $new_temp_seq[$key]['type'] = $val['type'];
+                            $new_temp_seq[$key]['time'] = $val['time'];
+                            $new_temp_seq[$key]['act'] = $val['act'];
+                            $new_temp_seq[$key]['skip'] = $val['skip']; 
+                            $new_temp_seq[$key]['seq_repeat'] = $val['seq_repeat']; 
+                            $new_temp_seq[$key]['ok_seq'] = $val['ok_seq']; 
+                            $new_temp_seq[$key]['ok_stop'] = $val['ok_stop']; 
+                            $new_temp_seq[$key]['countType'] = $val['countType'];
+                            $new_temp_seq[$key]['ok_screw'] = $val['ok_screw'];
+                            $new_temp_seq[$key]['unscrew_count'] = $val['unscrew_count'];
+                            $new_temp_seq[$key]['ng_stop'] = $val['ng_stop'];
+                            $new_temp_seq[$key]['ng_unscrew'] = $val['ng_unscrew'];
+                            $new_temp_seq[$key]['interrupt_alarm'] = $val['interrupt_alarm'];
+                            $new_temp_seq[$key]['accu_angle'] = $val['accu_angle'];
+                            $new_temp_seq[$key]['Thread_Calcu'] = $val['Thread_Calcu'];
+                            $new_temp_seq[$key]['unscrew_mode'] = $val['unscrew_mode'];
+                            $new_temp_seq[$key]['unscrew_force'] = $val['unscrew_force'];
+                            $new_temp_seq[$key]['unscrew_rpm'] = $val['unscrew_rpm'];
+                            $new_temp_seq[$key]['unscrew_dir'] = $val['unscrew_dir'];
+                            $new_temp_seq[$key]['unscrew_torque_threshold'] = $val['unscrew_torque_threshold'];
+                            $new_temp_seq[$key]['image'] = $val['image'];
+                            $new_temp_seq[$key]['message'] = $val['message'];
+                            $new_temp_seq[$key]['delay'] = $val['delay'];
+                            $new_temp_seq[$key]['event_id'] = $val['event_id'];
+                            $new_temp_seq[$key]['input_pin_no'] = $val['input_pin_no'];
+                            $new_temp_seq[$key]['output_pin_no'] = $val['output_pin_no'];
+                            $new_temp_seq[$key]['wave'] = $val['wave'];
+                            $new_temp_seq[$key]['wave_on'] = $val['wave_on'];
+                            $new_temp_seq[$key]['addtion'] = $val['addtion'];
+
+                        }
+
+                        $insertedrecords = $this->jobModel->copy_sequence_by_job_id($new_temp_seq);  
+    
+                    }
+
+                    if(!empty($select_step)){
+                        $new_temp_step = array();
+                        $temp_step = array();
+                        $temp_step = $select_step;
+                       
+                        foreach($temp_step as $k_step =>$v_step){
+
+                            $new_temp_step[$k_step]['JOBID'] = $new_jobid;
+                            $new_temp_step[$k_step]['SEQID'] = $v_step['SEQID'];
+                            $new_temp_step[$k_step]['StepSelect'] = $v_step['StepSelect'];
+                            $new_temp_step[$k_step]['STEPname'] = $v_step['STEPname'];
+                            $new_temp_step[$k_step]['type'] = $v_step['type'];
+                            $new_temp_step[$k_step]['time'] = $v_step['time'];
+                            $new_temp_step[$k_step]['act'] = $v_step['act'];
+                            $new_temp_step[$k_step]['StepSwitch'] = $v_step['StepSwitch'];
+                            $new_temp_step[$k_step]['StepRPM'] = $v_step['StepRPM'];
+                            $new_temp_step[$k_step]['StepOption'] = $v_step['StepOption'];
+                            $new_temp_step[$k_step]['StepTime'] = $v_step['StepTime'];
+                            $new_temp_step[$k_step]['StepAngle'] = $v_step['StepAngle'];
+                            $new_temp_step[$k_step]['StepTorque'] = $v_step['StepTorque'];
+                            $new_temp_step[$k_step]['StepDirection'] = $v_step['StepDirection'];
+                            $new_temp_step[$k_step]['StepDelay'] = $v_step['StepDelay'];
+                            $new_temp_step[$k_step]['StepMoniByWin'] = $v_step['StepMoniByWin'];
+                            $new_temp_step[$k_step]['StepLimiHi'] = $v_step['StepLimiHi'];
+                            $new_temp_step[$k_step]['StepLimiLo'] = $v_step['StepLimiLo'];
+                            $new_temp_step[$k_step]['StepHiAngle'] = $v_step['StepHiAngle'];
+                            $new_temp_step[$k_step]['StepLoAngle'] = $v_step['StepLoAngle'];
+                            $new_temp_step[$k_step]['StepLoAngle'] = $v_step['StepLoAngle'];
+                            $new_temp_step[$k_step]['StepHiTorque'] = $v_step['StepHiTorque'];
+                            $new_temp_step[$k_step]['StepLoTorque'] = $v_step['StepLoTorque'];
+                            $new_temp_step[$k_step]['StepAccelerateOffset'] = $v_step['StepAccelerateOffset'];
+                            $new_temp_step[$k_step]['StepAccelerateOffsetSign'] = $v_step['StepAccelerateOffsetSign'];
+                            $new_temp_step[$k_step]['StepEnableTorqueOffset'] = $v_step['StepEnableTorqueOffset'];
+                            $new_temp_step[$k_step]['StepTorqueOffset'] = $v_step['StepTorqueOffset'];
+                            $new_temp_step[$k_step]['StepTorqueOffsetSign'] = $v_step['StepTorqueOffsetSign'];
+                            $new_temp_step[$k_step]['StepEnableDownShift']  = $v_step['StepEnableDownShift'];
+                            $new_temp_step[$k_step]['StepTorqueDownShift'] = $v_step['StepTorqueDownShift'];
+                            $new_temp_step[$k_step]['StepRPMDownShift'] = $v_step['StepRPMDownShift'];
+                            $new_temp_step[$k_step]['StepEnbaleThreshold'] = $v_step['StepEnbaleThreshold'];
+                            $new_temp_step[$k_step]['StepTorqueTS'] = $v_step['StepTorqueTS'];
+                            $new_temp_step[$k_step]['StepReTry'] = $v_step['StepReTry'];
+                            $new_temp_step[$k_step]['StepUnScrew'] = $v_step['StepUnScrew'];
+                            $new_temp_step[$k_step]['StepReTryTorq'] = $v_step['StepReTryTorq'];
+                            $new_temp_step[$k_step]['StepReTryAngl'] = $v_step['StepReTryAngl'];
+                            $new_temp_step[$k_step]['StepAngleRecord'] = $v_step['StepAngleRecord'];
+                            $new_temp_step[$k_step]['StepAutoDetectAngle'] = $v_step['StepAutoDetectAngle'];
+                            $new_temp_step[$k_step]['InterruptAlarm'] = $v_step['InterruptAlarm'];
+                            $new_temp_step[$k_step]['OverAngleStop'] = $v_step['OverAngleStop'];
+                            $new_temp_step[$k_step]['KValue'] = $v_step['KValue'];
+                            $new_temp_step[$k_step]['step_unit'] = $v_step['step_unit'];
+                        }
+                      
+                        $res = $this->jobModel->copy_step_by_job_id($new_temp_step);     
+                    }
+                    
+                    if($res){
+                        $res_msg = $text['Copy']."  ".$text['job_id'].':'. $_POST['new_jobid']."  ".$text['success'];
+                        $this->MiscellaneousModel->generateErrorResponse('Success', $res_msg );
+                    }else{
+                        $res_msg = $text['Copy']."  ".$text['job_id'].':'. $_POST['new_jobid']."  ".$text['fail'];
+                        $this->MiscellaneousModel->generateErrorResponse('Error', $res_msg );
+                    }
+                    
+                }
+            }
+        
+        }
+
+    }
+
+}
+
+?>

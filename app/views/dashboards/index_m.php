@@ -1,0 +1,442 @@
+<link rel="stylesheet" href="<?php echo URLROOT; ?>css/tcc_main.css" type="text/css">
+
+<div class="container-ms">
+    <div class="main-content">
+        <div class="center-content w3-center">
+            <div style="text-shadow:3px 5px 0 #444;" class="wrapper w3-center w3-text-red">
+                <div class="buttonbox" style=" top: 2%;right: 10px;text-align: right;position: absolute;">
+                <input type="button" name="" value="<?php echo $text['logout_text'];?>" onclick="logout()">
+                <input type="button" name="" value="简中" data-language="zh-cn" onclick="language_change('zh-cn');" >
+                <input type="button" name="" value="繁中" data-language="zh-tw" onclick="language_change('zh-tw');">
+                <input type="button" name="" value="English" data-language="en-us" onclick="language_change('en-us');">
+                </div>
+
+     
+                <div style=" margin-top: 0%">   
+                    <h1 class="col-ms-3 pt-5"  style="font-size: 50px;"><?php echo TITLE_INDEX; ?></h1>
+                    <div style="text-shadow:2px 2px 0 #444; font-size: 30px" class="text w3-center w3-text-yellow"><?php echo SUBTITLE_INDEX; ?></div>
+                </div>
+             
+             
+
+            </div>
+
+            <div class="button">
+                <div class="row">  <!-- chỉ 1 row duy nhất -->
+                    <button class="menu-item blue" id="job_manager" onclick="window.location.href='?url=Jobs/index'"></button>
+                    <button class="menu-item green" id="io_input" onclick="window.location.href='?url=Inputs/index'"></button>
+                    <button class="menu-item orange" id="io_output" onclick="window.location.href='?url=Outputs/index'"></button>
+                    <button class="menu-item purple" id="operation" onclick="window.location.href='?url=Dashboards/operation'"></button>
+                    <button class="menu-item lightblue" id="data" onclick="window.location.href='?url=Data/index'"></button>
+                    <button class="menu-item pink" id="tool" onclick="window.location.href='?url=Tools/index'"></button>
+                    <button class="menu-item PaleGreen" id="setting" onclick="window.location.href='?url=Settings/index'"></button>
+                    <?php if($_SESSION['privilege'] == 'admin'){ ?>
+                        <?php if($data['agent_type'] == '2'){ ?>
+                            <button class="menu-item lime" id="agent" onclick="window.location.href='?url=Agents'"></button>
+                        <?php } ?>
+                        <button class="menu-item indigo" id="load" onclick="DB_sync_idas('C2D')"></button>
+                        <button class="menu-item deep-orange" id="save" onclick="DB_sync_idas('D2C')"></button>
+                    <?php } ?>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- <style>
+.button-container 
+{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* Center buttons in the container */
+    gap: 10px; /* Adjust space between buttons */
+}
+
+/* Khi màn hình nhỏ (dưới 768px), hiển thị 2 nút trên 1 hàng */
+@media (max-width: 768px) {
+    .button-container {
+        justify-content: space-evenly; /* Chia đều không gian giữa các nút */
+    }
+    
+}
+
+@media only screen and (max-width: 768px) {
+    .bottom-right {
+        position: fixed; /* 固定在螢幕右下角 */
+        bottom: 10px;  /* 距離頁面底部 10px */
+        right: 10px;   /* 距離頁面右邊 10px */
+        color: white;
+        font-size: 18px;
+    }
+}
+
+</style> -->
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const langRaw = getCookie('language') || 'en-us';
+    const language = (langRaw.toLowerCase() === 'en') ? 'en-us' : langRaw.toLowerCase();
+
+    alertify.defaults.glossary = {
+        title: (language === 'zh-tw') ? '提示' :
+            (language === 'zh-cn') ? '提示' : 'Notification',
+        ok: (language === 'zh-tw') ? '確定' :
+            (language === 'zh-cn') ? '确定' : 'OK',
+        cancel: (language === 'zh-tw') ? '取消' :
+                (language === 'zh-cn') ? '取消' : 'Cancel'
+    };
+});
+    
+document.addEventListener('DOMContentLoaded', function() {
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+      var headerElements = document.querySelectorAll('.ajs-header');
+      headerElements.forEach(function(headerElement) {
+        headerElement.parentNode.removeChild(headerElement);
+      });
+    });
+  });
+
+  observer.observe(document.body, { childList: true, subtree: true });
+});
+
+function language_change(language){
+    if( language){
+        $.ajax({
+            url: "?url=Dashboards/change_language",
+            method: "POST",
+            data:{ 
+                language: language
+
+            },
+            success: function(response) {
+                history.go(0);
+            },
+            error: function(xhr, status, error) {
+                
+            }
+        });
+
+    }
+}
+
+
+function DB_sync_idas(argument) {
+    const language = getCookie('language');
+
+    const titles = {
+        "zh-cn": { "D2C": '同步 iDas的数据库到控制器', "C2D": '同步控制器的数据库到iDas' },
+        "zh-tw": { "D2C": '同步iDas的DB到控制器', "C2D": '同步控制器的DB到iDas' },
+        "default": { "D2C": 'Sync iDas DB to controller', "C2D": 'Sync controller DB to iDas' }
+    };
+
+    const messages = {
+        "zh-cn": { "D2C": '同步后目前控制器上的资料将被覆盖，确认是否同步', "C2D": '同步后目前iDas上的资料将被覆盖，确认是否同步' },
+        "zh-tw": { "D2C": '同步後目前控制器上的資料將被覆蓋，確認是否同步', "C2D": '同步後目前iDas上的資料將被覆蓋，確認是否同步' },
+        "default": {
+            "D2C": "After synchronization, the controller's data will be overwritten. Confirm?",
+            "C2D": "After synchronization, iDas data will be overwritten. Confirm?"
+        }
+    };
+
+    const syncingTexts = {
+        "zh-cn": "同步中，请稍候...",
+        "zh-tw": "同步中，請稍候...",
+        "default": "Syncing, please wait..."
+    };
+
+    const errorMessages = {
+        "zh-cn": {
+            "login": "目前控制器有人登入，无法进行同步！",
+            "check": "无法确认控制器登入状态",
+            "syncFail": "同步失败，请稍后再试",
+            "json": "回传资料错误"
+        },
+        "zh-tw": {
+            "login": "目前控制器有人登入，無法進行同步！",
+            "check": "無法確認控制器登入狀態",
+            "syncFail": "同步失敗，請稍後再試",
+            "json": "回傳資料錯誤"
+        },
+        "default": {
+            "login": "Someone is logged in on the controller. Sync cannot proceed.",
+            "check": "Unable to verify controller login status",
+            "syncFail": "Synchronization failed. Please try again later.",
+            "json": "Invalid response from server"
+        }
+    };
+
+    // ★ 新增：OK / Cancel 語系
+    const okText = (language === 'zh-cn') ? '确定' :
+                    (language === 'zh-tw') ? '確定' : 'OK';
+    const cancelText = (language === 'zh-cn') ? '取消' :
+                        (language === 'zh-tw') ? '取消' : 'Cancel';
+
+
+    const title = titles[language]?.[argument] || titles["default"][argument];
+    const message = messages[language]?.[argument] || messages["default"][argument];
+    const syncingText = syncingTexts[language] || syncingTexts["default"];
+    const errorText = errorMessages[language] || errorMessages["default"];
+
+    alertify.confirm(title, message, function () {
+        $.ajax({
+            url: "?url=Settings/get_controller_login",
+            method: "POST",
+            success: function (response) {
+                try {
+                        const result = JSON.parse(response);
+                        if (!result.result) {
+                            showAlertAutoClose('Error', result.res_msg || errorText.check);
+                            return;
+                        }
+                        // ✅ 通過檢查：開始同步
+                        startSyncProcess(argument, syncingText, errorText);
+
+                } catch (e) {
+                    console.error("Login check parse error:", e, response);
+                    showAlertAutoClose('Error', errorText.json);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("AJAX login check failed:", status, error);
+                showAlertAutoClose('Error', errorText.check);
+            }
+        });
+    }, function () {})
+    .set('labels', { ok: okText, cancel: cancelText }); // ← 加上這行
+
+    function startSyncProcess(argument, syncingText, errorText) {
+        let progress = 0;
+        const totalSeconds = 3;
+        const intervalTime = (totalSeconds * 1000) / 100;
+
+        addOverlay();
+        createProgressDialog(syncingText);
+
+        const interval = setInterval(() => {
+            progress += 1;
+            const progressBar = document.getElementById('animatedProgressBar');
+            if (progressBar) progressBar.style.width = progress + "%";
+
+            const syncText = document.getElementById('syncText');
+            if (progressBar) progressBar.value = progress;
+            if (syncText) syncText.innerText = syncingText + ' ' + progress + '%';
+
+            if (progress >= 100) {
+                clearInterval(interval);
+                removeProgressDialog();
+
+                $.ajax({
+                    url: getSyncUrl(argument),
+                    method: "POST",
+                    data: { argument },
+                    success: function (response) {
+                        try {
+                            const res = JSON.parse(response);
+                            showAlertAutoClose(res.res_type, res.res_msg);
+                            setTimeout(() => {
+                                removeOverlay();
+                                if (res.res_type === "Success") history.go(0);
+                            }, 3000);
+                        } catch (e) {
+                            console.error("Response parse error:", e, response);
+                            showAlertAutoClose('Error', errorText.json);
+                            setTimeout(removeOverlay, 3000);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Sync failed:", status, error);
+                        showAlertAutoClose('Error', errorText.syncFail);
+                        setTimeout(removeOverlay, 3000);
+                    }
+                });
+            }
+        }, intervalTime);
+    }
+
+    function getSyncUrl(argument) {
+        switch (argument) {
+            case 'D2C': return '?url=Settings/Sync_check_db';
+            case 'C2D': return '?url=Settings/Sync_check_db_load';
+            default: return '';
+        }
+    }
+
+    function showAlertAutoClose(title, message, delay = 3000) {
+        const dialog = alertify.alert(title, message);
+        dialog.set('onshow', function () {
+            setTimeout(() => alertify.dismissAll(), delay);
+        });
+    }
+
+    function addOverlay() {
+        if (document.getElementById('overlayMask')) return;
+        const overlay = document.createElement('div');
+        overlay.id = 'overlayMask';
+        Object.assign(overlay.style, {
+            position: 'fixed',
+            top: '0', left: '0', width: '100%', height: '100%',
+            backgroundColor: 'rgba(0, 0, 0, 0.3)',
+            zIndex: '9998'
+        });
+        document.body.appendChild(overlay);
+    }
+
+    function removeOverlay() {
+        const overlay = document.getElementById('overlayMask');
+        if (overlay) overlay.remove();
+    }
+
+    function createProgressDialog(syncingText) {
+
+        const dialog = document.createElement("div");
+        dialog.id = "customProgressDialog";
+        Object.assign(dialog.style, {
+            position: "fixed", top: "30%", left: "50%",
+            transform: "translate(-50%, -30%)",
+            padding: "20px", background: "#fff", borderRadius: "20px",
+            boxShadow: "0 0 20px rgba(0,0,0,0.3)", zIndex: "9999",
+            width: "300px", textAlign: "center", fontFamily: "Arial"
+        });
+
+        dialog.innerHTML = `
+            <div id="syncText" style="margin-bottom: 10px; font-size: 16px; font-weight: bold;">
+                ${syncingText} 0%
+            </div>
+            <div class="spinner"></div>
+            <div class="progress-bar-container" style="margin-top: 15px;">
+                <div class="progress-bar-fill" id="animatedProgressBar"></div>
+            </div>
+            <style>
+            .spinner {
+                margin: 10px auto;
+                width: 32px;
+                height: 32px;
+                border: 4px solid #ddd;
+                border-top: 4px solid #00bfff;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+            }
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+
+            .progress-bar-container {
+                width: 100%;
+                height: 20px;
+                background: #e0e0e0;
+                border-radius: 10px;
+                overflow: hidden;
+            }
+            .progress-bar-fill {
+                height: 100%;
+                width: 0%;
+                background: linear-gradient(270deg, #4facfe, #00f2fe);
+                background-size: 400% 400%;
+                animation: gradientMove 4s ease infinite;
+                border-radius: 10px;
+                transition: width 0.2s ease-in-out;
+            }
+
+            @keyframes gradientMove {
+                0% { background-position: 0% 50%; }
+                50% { background-position: 100% 50%; }
+                100% { background-position: 0% 50%; }
+            }
+            </style>
+        `;
+        document.body.appendChild(dialog);
+    }
+
+
+    function removeProgressDialog() {
+        const dialog = document.getElementById("customProgressDialog");
+        if (dialog) dialog.remove();
+    }
+}
+
+</script>
+
+<style>
+    #job_manager {
+        background: url("<?php echo $text['img_job']; ?>") no-repeat;
+    }
+    #job_manager:hover {
+        background: url("<?php echo $text['img_job_hover']; ?>") no-repeat;
+    }
+
+    #io_input {
+        background: url("<?php echo $text['img_io_input']; ?>") no-repeat;
+    }
+    #io_input:hover {
+        background: url("<?php echo $text['img_io_input_hover']; ?>") no-repeat;
+    }
+
+    #io_output {
+        background: url("<?php echo $text['img_io_output']; ?>") no-repeat;
+    }
+    #io_output:hover {
+        background: url("<?php echo $text['img_io_output_hover']; ?>") no-repeat;
+    }
+
+    #operation {
+        background: url("<?php echo $text['img_operation']; ?>") no-repeat;
+    }
+    #operation:hover {
+        background: url("<?php echo $text['img_operation_hover']; ?>") no-repeat;
+    }
+    
+    #data {
+        background: url("<?php echo $text['img_data']; ?>") no-repeat;
+    }
+    #data:hover {
+        background: url("<?php echo $text['img_data_hover']; ?>") no-repeat;
+    }
+
+    #tool {
+        background: url("<?php echo $text['img_tool']; ?>") no-repeat;
+    }
+    #tool:hover {
+        background: url("<?php echo $text['img_tool_hover']; ?>") no-repeat;
+    }
+
+    #setting {
+        background: url("<?php echo $text['img_setting']; ?>") no-repeat;
+    }
+    #setting:hover {
+        background: url("<?php echo $text['img_setting_hover']; ?>") no-repeat;
+    }
+
+    #load {
+        background: url("<?php echo $text['img_load']; ?>") no-repeat;
+    }
+    #load:hover {
+        background: url("<?php echo $text['img_load_hover']; ?>") no-repeat;
+    }
+
+    #save {
+        background: url("<?php echo $text['img_save']; ?>") no-repeat;
+    }
+    #save:hover {
+        background: url("<?php echo $text['img_save_hover']; ?>") no-repeat;
+    }
+
+    #agent {
+        background: url("<?php echo $text['img_agent']; ?>") no-repeat;
+    }
+    #agent:hover {
+        background: url("<?php echo $text['img_agent_hover']; ?>") no-repeat;
+    }
+       
+    #remote {
+        background: url("<?php echo $text['img_remote']; ?>") no-repeat;
+    }
+    #remote:hover {
+        background: url("<?php echo $text['img_remote_hover']; ?>") no-repeat;
+    }
+
+
+
+</style>
