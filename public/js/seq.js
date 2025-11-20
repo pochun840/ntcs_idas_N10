@@ -14,6 +14,7 @@
         data.append("seq_id", seq_id);
         data.append("seq_type_id", seq_type_id);
         data.append("seq_name", document.getElementById("seq_name")?.value || '');
+        data.append("tool_id", document.getElementById("tool_id")?.value || 0);
 
 
 
@@ -56,14 +57,17 @@
 
         // Fastening
         if (seq_type_id === "1") {
+
             data.append("tightening_repeat", document.getElementById("tightening_repeat")?.value || '');
             data.append("timeout", document.getElementById("timeout")?.value || '');
             data.append("ng_stop", document.getElementById("ng_stop")?.value || '');
             data.append("speed", document.getElementById("speed")?.value || '');
             data.append("torque_threshold", document.getElementById("torque_threshold")?.value || '');
-            data.append("force_number", document.getElementById("force_number")?.value || '');
+            data.append("unscrew_force", document.getElementById("unscrew_force")?.value || '');
             data.append("dt_time", document.getElementById("dt_time")?.value || '');
             data.append("tt_time", document.getElementById("tt_time")?.value || '');
+            data.append("total_angle_limit", document.getElementById("total_angle_limit")?.value || '');
+            data.append("total_angle_lower", document.getElementById("total_angle_lower")?.value || '');
 
             // Radio buttons
             data.append("ok_seq", document.querySelector("input[name='ok_seq_option']:checked")?.value || '0');
@@ -74,6 +78,8 @@
             data.append("reverse_mode", document.querySelector("input[name='reverse_mode_option']:checked")?.value || '0');
             data.append("direction", document.querySelector("input[name='direction_option']:checked")?.value || '1');
             data.append("force_option", document.querySelector("input[name='force_option']:checked")?.value || '0');
+
+            
 
             if(seq_unit ==0 ){
                 document.getElementById('torque_threshold').value = "0.00";
@@ -104,7 +110,7 @@
             ? "?url=Sequences/update_all_seq"
             : "?url=Sequences/create_seq";
 
-        let check = input_check(); // Nếu có kiểm tra trước
+        let check = seq_fastening_check(); // Nếu có kiểm tra trước
         
         if (check) {
             document.querySelector(".main-content").classList.add("overlay-active");
@@ -181,5 +187,3 @@
     }
 
 
-
-    

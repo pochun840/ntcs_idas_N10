@@ -5,13 +5,14 @@ class Database
     private $dbh;
     private $stmt;
     private $error;
-    private $db_errcode;// db dev
+    private $db_errcode;
     
     private $db_data;
     private $db_iDas;
     private $db_iDas_login;
     private $db_ntcs_device;
     private $db_iDas_tools;
+    private $db_barcode;
     private $db_con;
 
     public function __construct()

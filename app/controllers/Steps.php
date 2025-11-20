@@ -139,7 +139,7 @@ class Steps extends Controller
                 'StepTorqueDownShift' => number_format(round(floatval($_POST['StepTorqueDownShift'] ?? 0), 3), 3, '.', ''),
                 'StepRPMDownShift' => intval($_POST['StepRPMDownShift'] ?? 0),
                 'StepTorqueTS' => number_format(round(floatval($_POST['StepTorqueTS'] ?? 0), 3), 3, '.', ''),
-                'StepEnbaleThreshold' => $StepEnableThreshold,
+                'StepEnableThreshold' => $StepEnableThreshold,
                 'StepReTry' => 1,
                 'StepUnScrew' => 1,
                 'StepReTryTorq' => 0,

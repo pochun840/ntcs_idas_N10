@@ -93,44 +93,44 @@
                         <div style="background-color: #F2F1F1;">
                             
                             <div class="row t1">
-                                    <div class="col-4 t1"><?php echo $text['seq_name'];?>:</div>
-                                    <div class="col t2">
-                                        <input id="seq_name" class="form-control"
-                                            value="<?php echo isset($data['seq_data']['SEQname']) 
-                                                ? $data['seq_data']['SEQname'] 
-                                                : 'SEQ-' . $data['next_seq_id']; ?>">
-                                        <div class="invalid-feedback"></div>
-                                    </div>
+                                <div class="col-4 t1"><?php echo $text['seq_name'];?>:</div>
+                                <div class="col t2">
+                                    <input id="seq_name" class="form-control"
+                                        value="<?php echo isset($data['seq_data']['SEQname']) 
+                                            ? $data['seq_data']['SEQname'] 
+                                            : 'SEQ-' . $data['next_seq_id']; ?>">
+                                    <div class="invalid-feedback"></div>
                                 </div>
+                            </div>
                                 
-                                <div class="row t1">
-                                    <div class="col-4 t1"><?php echo $text['Timeout'];?> (<?php echo $text['Second'];?>):</div>
-                                    <div class="col t2">
-                                        <input id="timeout" value="0" class="form-control">
-                                        <div class="invalid-feedback"></div> (0-60)
-                                    </div>
+                            <div class="row t1">
+                                <div class="col-4 t1"><?php echo $text['Timeout'];?> (<?php echo $text['Second'];?>):</div>
+                                <div class="col t2">
+                                    <input id="timeout" value="0" class="form-control">
+                                    <div class="invalid-feedback"></div> (0-60)
                                 </div>
-                                <div class="row t1">
-                                    <div class="col-4 t1"><?php echo $text['text_message'];?>:</div>
-                                    <div class="col t2 form-group">
-                                        <textarea id="text_message" name="text_message" rows="1" maxlength="30" placeholder=""><?php echo $seq_data['message'] ?? ''; ?></textarea>
-                                        <div class="note"></div>
-                                    </div>
+                            </div>
+
+                            <div class="row t1">
+                                <div class="col-4 t1"><?php echo $text['text_message'];?>:</div>
+                                <div class="col t2 form-group">
+                                    <textarea id="text_message" name="text_message" rows="1" maxlength="30" placeholder=""><?php echo $seq_data['message'] ?? ''; ?></textarea>
+                                    <div class="note"></div>
                                 </div>
-                                <div class="row t1">
-                                    <div class="col-4 t1"><?php echo $text['imgText_message'];?>:</div>
-                                    <div class="col t2">
-                                        <select id="img_list" class="form-select" style="font-size: 17px;width: 190px;">
-                                            <option value="-">-</option>
-                                            <?php foreach ($data['img_list'] as $key => $value) {
-                                                if (!in_array($value,array(".",".."))){ //排除.跟..
-                                                    echo '<option value="'.$value.'" >'.$value.'</option>';
-                                                }
-                                            } ?>
-                                        </select>
-                                    </div>
+                            </div>
+                            <div class="row t1">
+                                <div class="col-4 t1"><?php echo $text['imgText_message'];?>:</div>
+                                <div class="col t2">
+                                    <select id="img_list" class="form-select" style="font-size: 17px;width: 190px;">
+                                        <option value="-">-</option>
+                                        <?php foreach ($data['img_list'] as $key => $value) {
+                                            if (!in_array($value,array(".",".."))){ //排除.跟..
+                                                echo '<option value="'.$value.'" >'.$value.'</option>';
+                                            }
+                                        } ?>
+                                    </select>
                                 </div>
-                                
+                            </div>
                             
                             <div class="row t1">
                                 <div class="col t2" style="border: solid;border-color: #d3d3d3;display: flex;align-items: center;border-radius: 10px;justify-content: center;">
@@ -197,47 +197,6 @@
         document.getElementById('select_img').src = '../public/img/' + this.value
     });
 
-    function input_check(argument) {
-
-        let conditions = [
-            { id: 'seq_name', pattern: /^[a-zA-Z0-9\u4E00-\u9FA5\-]+$/, min: null, max: null },
-            { id: 'timeout', pattern: /^\d{0,4}$/, min: 0, max: 60 },
-        ];
-
-        let isFormValid = true;
-        conditions.forEach(function(input) {
-            var element = document.getElementById(input.id);
-            var value = element.value.trim();
-
-            if(input.id != 'seq_name'){
-                element.nextElementSibling.innerHTML = input.min+' ~ '+input.max;
-            }
-
-            if (value === "") {
-                element.classList.add("is-invalid");
-                isFormValid = false;
-            } else if (!input.pattern.test(value)) {
-                // element.value = "";
-                element.classList.add("is-invalid");
-                isFormValid = false;
-            } else if (input.min !== null && parseFloat(value) < input.min) {
-                element.classList.add("is-invalid");
-                isFormValid = false;
-            } else if (input.max !== null && parseFloat(value) > input.max) {
-                element.classList.add("is-invalid");
-                isFormValid = false;
-            } else {
-                element.classList.remove("is-invalid");
-            }
-
-        });
-
-        console.log(conditions)
-
-        return isFormValid;
-
-    }
-
 
 </script>
 
@@ -252,3 +211,4 @@
 
 
 <?php require APPROOT . 'views/inc/footer.php'; ?>
+<?php require APPROOT . 'views/sequences/seq_share.php'; ?>

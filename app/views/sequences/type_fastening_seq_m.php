@@ -81,6 +81,10 @@
                         <!-- Thêm 2 field mới -->
                         <input type="hidden" id="data_dt_time" value="<?php echo isset($data['seq_data']['dt_time']) ? $data['seq_data']['dt_time'] : '0'; ?>">
                         <input type="hidden" id="data_tt_time" value="<?php echo isset($data['seq_data']['tt_time']) ? $data['seq_data']['tt_time'] : '0'; ?>">
+
+                        <input type="hidden" id="data_angle_limit" value="<?php echo $data['seq_data']['total_angle_limit']; ?>">
+                        <input type="hidden" id="data_angle_lower" value="<?php echo $data['seq_data']['total_angle_lower']; ?>">
+            
                     </div>
 
                     <?php }else{ ?>
@@ -188,6 +192,22 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="row t1">
+                                <div class="col-4 t1"><?php echo $text['total_high_angle'];?>:</div>
+                                <div class="col t2">
+                                    <input id="total_angle_limit" class="form-control"  value="<?php echo $data['seq_data']['total_angle_limit'] ?? ''; ?>">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+
+                            <div class="row t1">
+                                <div class="col-4 t1"><?php echo $text['total_low_angle'];?>:</div>
+                                <div class="col t2">
+                                    <input id="total_angle_lower" class="form-control" value="<?php echo $data['seq_data']['total_angle_lower'] ?? ''; ?>">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
  
                             <div class="row t1">
                                 <div class="col-4 t1"><?php echo $text['Angle_Calculation'];?> (<?php echo $text['step'];?>):</div>
@@ -282,24 +302,28 @@
                             </div>
 
                             <div class="row t1" id="div_force">
-                                <div class="col-4 t1"><?php echo $text['Force'];?> (%):</div>
-                                <div class="col t2">
-                                    <div class="form-check form-check-inline col-xs-3">
-                                        <input class="form-check-input" type="radio" name="force_option" id="force_on" value="1">
-                                        <label class="form-check-label" for="force_on"><?php echo $text['switch_on']; ?></label>&nbsp;&nbsp;
-                                        <input class="form-control" size="5" id="force_number" name="force_number" style="height:27px;">
-                                        <div class="invalid-feedback"></div>
-                                    </div>
-                                    <div class="form-check form-check-inline col-xs-3">
-                                        <input class="form-check-input" type="radio" name="force_option" id="force_unlimit" value="2">
-                                        <label class="form-check-label" for="force_unlimit"><?php echo $text['Unlimited_text']; ?></label>
-                                    </div>
-                                    <div class="form-check form-check-inline col-xs-3">
-                                        <input class="form-check-input" type="radio" name="force_option" id="force_off" value="0">
-                                        <label class="form-check-label" for="force_off"><?php echo $text['switch_off']; ?></label>
+                                <div class="col-4 t1"><?php echo $text['Force'];?> (%) :</div>
+                                    <div class="col t2">
+                                        <div class="form-check form-check-inline col-xs-3">
+                                            <input class="form-check-input" type="radio" name="force_option" id="force_on" value="1"
+                                            <?php  echo ($data['mode'] == 'edit' && $data['seq_data']['unscrew_force'] >= 1 && $data['seq_data']['unscrew_force'] <= 100) ? 'checked' : ''; ?> >
+                                            <label class="form-check-label" for="force_on"><?php echo $text['switch_on']; ?></label>&nbsp;&nbsp;
+                                            <input class="form-control" size="5" id="unscrew_force" name="unscrew_force" 
+                                            value="<?php echo ($data['mode'] == 'edit') ? $data['seq_data']['unscrew_force'] : ''; ?>" style="height:27px;">
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+                                        <div class="form-check form-check-inline col-xs-3">
+                                            <input class="form-check-input" type="radio" name="force_option" id="force_unlimit" value="2"
+                                            <?php echo ($data['mode'] == 'edit' && $data['seq_data']['unscrew_force']  > 101) ? 'checked' : ''; ?>  >
+                                            <label class="form-check-label" for="force_unlimit"><?php echo $text['Unlimited_text']; ?></label>
+                                        </div>
+                                        <div class="form-check form-check-inline col-xs-3">
+                                            <input class="form-check-input" type="radio" name="force_option" id="force_off" value="3"
+                                            <?php echo ($data['mode'] == 'edit' && $data['seq_data']['unscrew_force'] == 0) ? 'checked' : ''; ?>  >
+                                            <label class="form-check-label" for="force_off"><?php echo $text['switch_off']; ?></label>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
                         </div>
                     </div>
                 </div>        
@@ -340,11 +364,14 @@
             document.getElementById("direction_ccw").checked = true;
             document.getElementById("dt_time").value = 0;
             document.getElementById("tt_time").value = 0;
-            
+
+            document.getElementById("total_angle_limit").value = 0;
+            document.getElementById("total_angle_lower").value = 0;
+                    
             // Mặc định khi new: force_off
             document.getElementById('force_off').checked = true;
-            document.getElementById('force_number').value = 50;
-            document.getElementById('force_number').disabled = true;
+            document.getElementById('unscrew_force').value = 50;
+            document.getElementById('unscrew_force').disabled = true;
 
             // Gọi change thủ công bằng cách tạo Event
             document.getElementById('force_off').dispatchEvent(new Event('change'));
@@ -369,7 +396,10 @@
             // Thêm 2 dòng này 👇
             document.getElementById("dt_time").value = document.getElementById("data_dt_time").value;
             document.getElementById("tt_time").value = document.getElementById("data_tt_time").value;
-           
+
+            document.getElementById("total_angle_limit").value = document.getElementById("data_angle_limit").value;
+            document.getElementById("total_angle_lower").value = document.getElementById("data_angle_lower").value;
+            
             let ok_seq = document.getElementById("data_ok_seq").value;
             let seq_stop = document.getElementById("data_ok_stop").value;
             let reverse_count = document.getElementById("data_unscrew_count").value;
@@ -417,50 +447,50 @@
             }else{
                 document.getElementById("direction_cw").checked = true;
             }
- 
+
             // Lấy giá trị force từ hidden input hoặc data (bạn đặt đúng ở server)
             let forceRaw = document.getElementById('data_unscrew_force').value;
 
-            let force_option = '0';  // OFF mặc định
-            let force_number = '';
+            let force_option = '3';  // OFF mặc định
+            let unscrew_force = '';
 
             if (forceRaw === null || forceRaw === undefined || forceRaw === '') {
                 // giữ mặc định OFF
-                force_option = '0';
-                force_number = '';
+                force_option = '3';
+                unscrew_force = '';
             } else {
-                let unscrew_force = parseInt(forceRaw);
+                unscrew_force = parseInt(forceRaw);
 
-                if (unscrew_force > 0) {
-                    force_option = '1';  // ON
-                    force_number = unscrew_force;
-                } else if (unscrew_force === -1) {
-                    force_option = '2';  // Unlimited
-                    force_number = '';
-                } else {
-                    force_option = '0';  // OFF
-                    force_number = '';
-                }
+                if (unscrew_force > 0 && unscrew_force <= 100) { 
+                    force_option = '1'; // ON 
+                    } else if (unscrew_force > 101) { 
+                        force_option = '2'; // Unlimited 
+                        unscrew_force = ''; 
+                    } else { 
+                        force_option = '3'; // OFF 
+                        unscrew_force = ''; }
             }
               
-            document.getElementById('force_number').value = force_number;
-
+            // Reset trạng thái radio và input
+            document.getElementById('unscrew_force').disabled = true;
             document.getElementById('force_on').checked = false;
             document.getElementById('force_unlimit').checked = false;
             document.getElementById('force_off').checked = false;
 
-            if (force_option === '1') {
-                document.getElementById('force_on').checked = true;
-                document.getElementById('force_number').disabled = false;
-            } else if (force_option === '2') {
-                document.getElementById('force_unlimit').checked = true;
-                document.getElementById('force_number').disabled = true;
-            } else {
-                document.getElementById('force_off').checked = true;
-                document.getElementById('force_number').disabled = true;
+            // Set theo mode
+            switch (force_option) {
+                case '1': // ON
+                    document.getElementById('force_on').checked = true;
+                    document.getElementById('unscrew_force').disabled = false;
+                    break;
+                case '2': // Unlimited
+                    document.getElementById('force_unlimit').checked = true;
+                    document.getElementById('unscrew_force').disabled = false; // chắc chắn mở
+                    break;
+                default: // OFF
+                    document.getElementById('force_off').checked = true;
+                    document.getElementById('unscrew_force').disabled = true;
             }
-
-            //getCheckboxValue_seq(); // ← thêm dòng này
             
         }
 
@@ -482,12 +512,13 @@
 
         function updateForceNumberStatus() {
             const isForceOn = document.getElementById('force_on').checked;
+            const isUnlimited = document.getElementById('force_unlimit').checked;
             const isReverseModeOn = document.getElementById('reverse_mode_on').checked;
 
-            if (isForceOn && isReverseModeOn) {
-                document.getElementById('force_number').disabled = false;
+            if ((isForceOn || isUnlimited) && isReverseModeOn) {
+                document.getElementById('unscrew_force').disabled = false;
             } else {
-                document.getElementById('force_number').disabled = true;
+                document.getElementById('unscrew_force').disabled = true;
             }
         }
 
@@ -569,81 +600,6 @@
       });
     });
 
-
-    function input_check(argument) {
-        let Tool_Max_Torque = document.getElementById('tool_max_torque').value;
-        let Tool_Min_Torque = document.getElementById('tool_min_torque').value;
-        let Tool_Max_RPM = document.getElementById('tool_max_rpm').value;
-        let Tool_Min_RPM = document.getElementById('tool_min_rpm').value;
-
-        var selectedValue = document.querySelector('input[name="force_option"]:checked')?.value;
-        var isAutoMode = document.getElementById('reverse_mode_off')?.checked;
-
-        let conditions = [
-            { id: 'seq_name', pattern: /^[a-zA-Z0-9\u4E00-\u9FA5\-]+$/, min: null, max: null },
-            { id: 'tightening_repeat', pattern: /^\d{0,4}$/, min: 1, max: 99 },
-            { id: 'timeout', pattern: /^\d{0,5}?$/, min: 0, max: 60 },
-            { id: 'ng_stop', pattern: /^\d{0,5}?$/, min: 0, max: 9 },
-            { id: 'speed', pattern: /^\d{1,3}$/, min: Tool_Min_RPM, max: Tool_Max_RPM },
-            { id: 'torque_threshold', pattern: /^\d{1,3}(\.\d{1,3})?$/, min: 0, max: Tool_Max_Torque },
-            { id: 'force_number', pattern: /^\d{1,3}$/, min: 1, max: 100 },
-            { id: 'dt_time', pattern: /^\d{0,5}?$/, min: 0, max: 99 },
-            { id: 'tt_time', pattern: /^\d{0,5}?$/, min: 0, max: 6000 },
-
-        ];
-
-        let isFormValid = true;
-
-        conditions.forEach(function(input) {
-            var element = document.getElementById(input.id);
-            var value = element.value.trim();
-
-            if (isAutoMode && (input.id === 'torque_threshold' || input.id === 'force_number' || input.id === 'speed')) {
-                // Bỏ qua validate khi chế độ tự động bật
-                return;
-            }
-
-            if(input.id != 'seq_name'){
-                var nextSibling = element.nextElementSibling;
-                if (nextSibling) {
-                    nextSibling.innerHTML = input.min + ' ~ ' + input.max;
-                }
-            }
-
-            // Xử lý riêng cho force_number dựa trên force_option
-            if(input.id === 'force_number'){
-                if(selectedValue === '1'){
-                    // bật validate
-                    element.disabled = false;
-                } else {
-                    // tắt validate và disable input
-                    element.disabled = true;
-                    element.classList.remove("is-invalid");
-                    return; // bỏ qua validate force_number
-                }
-            }
-
-            if (value === "") {
-                element.classList.add("is-invalid");
-                isFormValid = false;
-            } else if (!input.pattern.test(value)) {
-                element.classList.add("is-invalid");
-                isFormValid = false;
-            } else if (input.min !== null && parseFloat(value) < input.min) {
-                element.classList.add("is-invalid");
-                isFormValid = false;
-            } else if (input.max !== null && parseFloat(value) > input.max) {
-                element.classList.add("is-invalid");
-                isFormValid = false;
-            } else {
-                element.classList.remove("is-invalid");
-            }
-        });
-
-        console.log(conditions)
-        return isFormValid;
-    }
-
     function toggleDisableAndError(elementId, disable) {
         const element = document.getElementById(elementId);
         if (!element) {
@@ -662,9 +618,9 @@
         let reverseMode = $('input[name="reverse_mode_option"]:checked').val();
 
         if (forceOption === '1' && reverseMode === '1') {
-            $('#force_number').prop('disabled', false);
+            $('#unscrew_force').prop('disabled', false);
         } else {
-            $('#force_number').prop('disabled', true);
+            $('#unscrew_force').prop('disabled', true);
         }
     }
 
@@ -693,4 +649,6 @@
 </script>
 <?php } ?>
 
+
 <?php require APPROOT . 'views/inc/footer.php'; ?>
+<?php require APPROOT . 'views/sequences/seq_share.php'; ?>

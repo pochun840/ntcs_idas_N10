@@ -1,5 +1,18 @@
 <script>
+document.addEventListener('DOMContentLoaded', function () {
+    const langRaw = getCookie('language') || 'en-us';
+    const language = (langRaw.toLowerCase() === 'en') ? 'en-us' : langRaw.toLowerCase();
 
+    alertify.defaults.glossary = {
+        title: (language === 'zh-tw') ? '提示' :
+               (language === 'zh-cn') ? '提示' : 'Notification',
+        ok: (language === 'zh-tw') ? '確定' :
+            (language === 'zh-cn') ? '确定' : 'OK',
+        cancel: (language === 'zh-tw') ? '取消' :
+                (language === 'zh-cn') ? '取消' : 'Cancel'
+    };
+});
+    
 function cound_step(action) {
     const table = document.getElementById('step_table');
     if (!table) return;
@@ -12,24 +25,13 @@ function cound_step(action) {
     window.stepid = stepid;
     window.stepname = stepname;
 
-    //const requiresSelection = ['del', 'edit', 'copy'].includes(action);
-    const requiresSelection = ['del', 'edit', 'copy'];
+    const requiresSelection = ['del', 'edit', 'copy'].includes(action);
 
-    // 若需要 step 的操作卻沒選取列 - Ruò xūyào step de cāozuò què méi xuǎnqǔ liè
-    if (requiresSelection.includes(action) && !stepid){
-        if (typeof pleaseSelectJobTitle !== 'undefined' && typeof pleaseSelectJobMsg !== 'undefined') {
-            alertify.alert(pleaseSelectJobTitle, pleaseSelectJobMsg);
-        } else {
-            alertify.alert("Notification", "Please select a step"); // fallback tạm thời
-        }
+    // 有選取列時才執行這些操作
+    if (requiresSelection && !stepid) {
+        //alert("請先選擇一筆 Step 資料！");
         return;
     }
-
-    // // 有選取列時才執行這些操作
-    // if (requiresSelection && !stepid) {
-    //     //alert("請先選擇一筆 Step 資料！");
-    //     return;
-    // }
 
     // 顯示 overlay（如果需要）
     if (action === 'new' || requiresSelection) {
@@ -55,10 +57,15 @@ function cound_step(action) {
     }
 }
 
+
+
+
 function create_step() {
     var job_id = '<?php echo $data['job_id'];?>';    
     var seq_id = '<?php echo $data['seq_id'];?>';
     window.location.href = '../public/?url=Steps/variation/' + job_id + '/' + seq_id; 
+
+
 }
 
 function edit_step(){
@@ -69,22 +76,25 @@ function edit_step(){
 }
 
 
+
+
+
+
 function copy_step_by_id(){
     var jobid = '<?php echo $data['job_id']?>';
     var seqidnew = '<?php echo $data['stepid_new']?>';
     
     document.getElementById('from_step_id').value = stepid;    
-    document.getElementById("to_step_id").value = seqidnew;  
+    document.getElementById("to_step_id").value = seqidnew;
+
 
 }
-
 
 function copy_step_by_id_ajax(){
     var jobid = '<?php echo $data['job_id']?>';
     var seqid = '<?php echo $data['seq_id']?>';
     var stepid_new  = '<?php echo $data['stepid_new']?>';
-
-
+    
     if(stepid_new){
         $.ajax({
             url: "?url=Steps/copy_step",
@@ -138,7 +148,7 @@ function del_stepid(stepid) {
             document.getElementById("spinner").style.display = 'block';
 
             $.ajax({
-                url: "?url=Steps/delete_step",
+                url: "?url=Step/delete_step",
                 method: "POST",
                 data: {
                     stepid: stepid,
@@ -146,7 +156,7 @@ function del_stepid(stepid) {
                     seqid: seqid
                 },
                 success: function (response) {
-                    success_response_seq(response, 'spinner', `../public/?url=Steps/index/${jobid}/${seqid}`);
+                    success_response_seq(response, 'spinner', `../public/?url=Step/index/${jobid}/${seqid}`);
                 },
                 error: function (xhr, status, error) {
                     alertify.alert("Error", "Delete failed: " + error);
@@ -188,6 +198,8 @@ function sendRowInfoArray() {
         JOBID: JOBID,
         rowInfoArray: rowInfoArray
     };
+ 
+    
     if(rowInfoArray){
 
         $.ajax({
@@ -195,7 +207,6 @@ function sendRowInfoArray() {
             method: "POST",
             data: dataToSend,
             success: function(response) {
-                //console.log(response);
                 history.go(0); 
             },
             error: function(xhr, status, error) {

@@ -85,7 +85,6 @@
                         <input type="hidden" id="mode" value="<?php echo $data['mode']; ?>">
                     </div>
                 <?php } ?>
-
             </div>
 
             <div class="new-container">
@@ -111,6 +110,8 @@
                                         <div class="invalid-feedback"></div> (0-60)
                                     </div>
                                 </div>
+
+
                                 <div class="col-12 row t2 mt-3">
                                     <div class="col-3 t1"><?php echo $text['text_message'];?> :</div>
                                     <div class="col-9 t2 form-group">
@@ -157,21 +158,6 @@
 
 </div>
 
-<!-- Hiển thị bao nhiêu ký tự cho text_message
-<script>
-    const textarea = document.getElementById('text_message');
-    const note = textarea.nextElementSibling;
-
-    textarea.addEventListener('input', () => {
-        const remaining = 30 - textarea.value.length;
-        note.textContent = `Còn lại ${remaining} ký tự.`;
-    });
-
-    // Cập nhật ngay từ đầu nếu có nội dung ban đầu
-    textarea.dispatchEvent(new Event('input'));
-</script>
--->
-
 <script>
 	$(document).ready(function () {
         let mode = document.getElementById('mode').value;
@@ -210,47 +196,6 @@
         document.getElementById('select_img').src = '../public/img/' + this.value
     });
 
-    function input_check(argument) {
-
-        let conditions = [
-            { id: 'seq_name', pattern: /^[a-zA-Z0-9\u4E00-\u9FA5\-]+$/, min: null, max: null },
-            { id: 'timeout', pattern: /^\d{0,4}$/, min: 0, max: 60 },
-        ];
-
-        let isFormValid = true;
-        conditions.forEach(function(input) {
-            var element = document.getElementById(input.id);
-            var value = element.value.trim();
-
-            if(input.id != 'seq_name'){
-                element.nextElementSibling.innerHTML = input.min+' ~ '+input.max;
-            }
-
-            if (value === "") {
-                element.classList.add("is-invalid");
-                isFormValid = false;
-            } else if (!input.pattern.test(value)) {
-                // element.value = "";
-                element.classList.add("is-invalid");
-                isFormValid = false;
-            } else if (input.min !== null && parseFloat(value) < input.min) {
-                element.classList.add("is-invalid");
-                isFormValid = false;
-            } else if (input.max !== null && parseFloat(value) > input.max) {
-                element.classList.add("is-invalid");
-                isFormValid = false;
-            } else {
-                element.classList.remove("is-invalid");
-            }
-
-        });
-
-        console.log(conditions)
-
-        return isFormValid;
-
-    }
-
 
 </script>
 
@@ -265,3 +210,4 @@
 
 
 <?php require APPROOT . 'views/inc/footer.php'; ?>
+<?php require APPROOT . 'views/sequences/seq_share.php'; ?>

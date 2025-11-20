@@ -194,11 +194,6 @@
                                     </div>
                                 </div>
                                 
-                                <!-- Mũi tên thông báo dữ liệu vẫn chưa được cuộn hết -->
-                                <!-- <div id="scroll-indicator">
-                                    ↓
-                                </div> -->
-
                             </div>
                         </div>
                     </div>
@@ -257,70 +252,7 @@
 
 	});
 
-
-    function input_check(argument) {
-
-        let conditions = [
-            { id: 'seq_name', pattern: /^[a-zA-Z0-9\u4E00-\u9FA5\-]+$/, min: null, max: null },
-            { id: 'pulse', pattern: /^\d{0,4}$/, min: 100, max: 10000 },
-        ];
-
-        let isFormValid = true;
-        conditions.forEach(function(input) {
-            var element = document.getElementById(input.id);
-            var value = element.value.trim();
-
-            if(input.id != 'seq_name'){
-                element.nextElementSibling.innerHTML = input.min+' ~ '+input.max;
-            }
-
-            if (value === "") {
-                element.classList.add("is-invalid");
-                isFormValid = false;
-            } else if (!input.pattern.test(value)) {
-                // element.value = "";
-                element.classList.add("is-invalid");
-                isFormValid = false;
-            } else if (input.min !== null && parseFloat(value) < input.min) {
-                element.classList.add("is-invalid");
-                isFormValid = false;
-            } else if (input.max !== null && parseFloat(value) > input.max) {
-                element.classList.add("is-invalid");
-                isFormValid = false;
-            } else {
-                element.classList.remove("is-invalid");
-            }
-
-        });
-
-        return isFormValid;
-
-    }
-
 </script>
-
-<!-- xử lý ẩn mũi tên khi được cuộn hết -->
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-    const scrollArea = document.querySelector('.scrollbar-input-pin');
-    const arrow = document.getElementById('scroll-indicator');
-
-    function checkScroll() {
-        const isScrolledToBottom = scrollArea.scrollHeight - scrollArea.scrollTop <= scrollArea.clientHeight + 1;
-        arrow.style.display = isScrolledToBottom ? "none" : "block";
-    }
-
-    // Initial check
-    checkScroll();
-
-    // Check every time scrolls
-    scrollArea.addEventListener('scroll', checkScroll);
-
-    // Recheck on window resize (in case layout changes)
-    window.addEventListener('resize', checkScroll);
-});
-</script>
-
 
 <?php if($_SESSION['privilege'] != 'admin'){ ?>
 <script>
@@ -333,3 +265,4 @@
 
 
 <?php require APPROOT . 'views/inc/footer.php'; ?>
+<?php require APPROOT . 'views/sequences/seq_share.php'; ?>

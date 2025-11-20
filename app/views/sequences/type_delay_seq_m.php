@@ -103,6 +103,7 @@
                                     <div class="invalid-feedback"></div> (0-60)
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -149,47 +150,6 @@
         document.getElementById('select_img').src = '../public/img/' + this.value
     });
 
-    function input_check(argument) {
-
-        let conditions = [
-            { id: 'seq_name', pattern: /^[a-zA-Z0-9\u4E00-\u9FA5\-]+$/, min: null, max: null },
-            { id: 'timeout', pattern: /^\d{0,4}$/, min: 0, max: 60 },
-        ];
-
-        let isFormValid = true;
-        conditions.forEach(function(input) {
-            var element = document.getElementById(input.id);
-            var value = element.value.trim();
-
-            if(input.id != 'seq_name'){
-                element.nextElementSibling.innerHTML = input.min+' ~ '+input.max;
-            }
-
-            if (value === "") {
-                element.classList.add("is-invalid");
-                isFormValid = false;
-            } else if (!input.pattern.test(value)) {
-                // element.value = "";
-                element.classList.add("is-invalid");
-                isFormValid = false;
-            } else if (input.min !== null && parseFloat(value) < input.min) {
-                element.classList.add("is-invalid");
-                isFormValid = false;
-            } else if (input.max !== null && parseFloat(value) > input.max) {
-                element.classList.add("is-invalid");
-                isFormValid = false;
-            } else {
-                element.classList.remove("is-invalid");
-            }
-
-        });
-
-        console.log(conditions)
-
-        return isFormValid;
-
-    }
-
 
 </script>
 
@@ -204,3 +164,4 @@
 
 
 <?php require APPROOT . 'views/inc/footer.php'; ?>
+<?php require APPROOT . 'views/sequences/seq_share.php'; ?>

@@ -95,7 +95,7 @@ class Dashboard{
 
         // 找出所有符合 $id 的 CSV 檔案
         $csv_folder = "/mnt/ramdisk/ftp/";
-        $csv_files = glob($csv_folder . $id . "__*.csv");  // ✅ 根據 ID 篩選檔名開頭
+        $csv_files = glob($csv_folder . $id . "_*.csv");  // ✅ 根據 ID 篩選檔名開頭
 
         if (empty($csv_files)) {
             return [];

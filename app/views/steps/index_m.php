@@ -1,3 +1,4 @@
+
 <link rel="stylesheet" href="<?php echo URLROOT; ?>css/step_m.css" type="text/css">
 
 <div class="container-ms">
@@ -10,13 +11,13 @@
     <div class="main-content">
         <div class="center-content">
             <div class="topnav">
-                <label style="font-size:20px;color: #000; padding-left: 2%" for="job_id"><?php echo $text['job_id'];?> :</label>&nbsp;
+                <label style="font-size:3.2vmin;color: #000; padding-left: 0%" for="job_id"><?php echo $text['job_id'];?> :</label>&nbsp;
                 <input type="text" id="job_id" name="job_id" size="5" maxlength="20" value="<?php echo $data['job_id'];?>" disabled
-                style="height:28px; font-size:18px;text-align: center; background-color: #DDDDDD; border:0; margin: 3px;">
+                style="height:28px; font-size:3.2vmin;text-align: center; background-color: #DDDDDD; border:0; margin: 3px;">
 
-                <label style="font-size:20px;color: #000; padding-left: 2%" for="seq_id"><?php echo $text['seq_id'];?> :</label>&nbsp;
+                <label style="font-size:3.2vmin;color: #000; padding-left: 0%" for="seq_id"><?php echo $text['seq_id'];?> :</label>&nbsp;
                 <input type="text" id="seq_id" name="seq_id" size="5" maxlength="20" value="1" disabled
-                style="height:28px; font-size:18px;text-align: center; background-color: #DDDDDD; border:0; margin: 3px;">
+                style="height:28px; font-size:3.2vmin;text-align: center; background-color: #DDDDDD; border:0; margin: 3px;">
 
                 <?php $url ='?url=Sequences/index/'.$data['job_id'];?>
                 <button id="back_btn" type="button" onclick="window.location.href='<?php echo $url; ?>';"><?php echo $text['return'];?></button>
@@ -102,7 +103,7 @@
         				    <div class="row">
         				        <label for="to_step_id" class="t1 col-5 col-form-label"><?php echo $text['step_id'];?> :</label>
         				        <div class="t2 col-4">
-        				            <input type="number" class="form-control" id="to_step_id">
+        				            <input type="number" class="form-control" id="to_step_id" disabled >
         				        </div>
         				    </div>
         			    </div>

@@ -1,9 +1,11 @@
-<!DOCTYPE html>
 <div class="container-ms">
     <div class="w3-text-white w3-center">
         <table class="no-border">
             <tr id="header">
                 <td width="100%"><h3><?php echo $text['step_management']; ?></h3></td>
+                <!--<td>
+                    <img src="./img/btn_home.png" style="margin-right: 10px">
+                </td>-->
             </tr>
         </table>
     </div>
@@ -101,7 +103,7 @@
         				    <div class="row">
         				        <label for="to_step_id" class="t1 col-4 col-form-label"><?php echo $text['step_id'];?> :</label>
         				        <div class="t2 col-5">
-        				            <input type="number" class="form-control" id="to_step_id">
+        				            <input type="number" class="form-control" id="to_step_id" disabled>
         				        </div>
         				    </div>
         			    </div>
@@ -116,11 +118,10 @@
         </div>
     </div>
 
-    <div id="spinner" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 9999;">
-        <div class="spinner-border text-primary" role="status">
-            <span class="sr-only"></span>
-        </div>
-    </div>
+    <!-- 加载動畫 OP -->
+       <?php require_once '../app/views/inc/include_spinner.php';?>
+    <!-- 加载動畫 ED -->
+
 
 </div>
 

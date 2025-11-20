@@ -1,124 +1,120 @@
 <div id="Barcode_Setting" class="divMode" style="display: none; overflow-x: hidden;"  >
-            <div class="col t1" style="padding-left: 3%;font-weight: bold; padding-top: 1%"><?php echo $text['system_barcode_setting'] ;?></div>
-            <div class="table-container">
-                <div class="scrollbar" id="style-table">
-                    <div class="force-overflow">
-                        <table id="job_table" class="table w3-table w3-hoverable">
-                            <thead id="header-table">
-                                <tr class="w3-dark-grey">
-                                    <th></th>
-                                    <th><?php echo $text['job_id'];?></th>
-                                    <th><?php echo $text['job_name'];?></th>
-                                    <th><?php echo $text['system_barcode'];?></th>
-                                    <th><?php echo $text['system_barcode_from'];?></th>
-                                    <th><?php echo $text['system_barcode_to'];?></th>
-                                    <th><?php echo $text['system_barcode_mode'];?></th>
+    <div class="col t1" style="padding-left: 3%;font-weight: bold; padding-top: 1%"><?php echo $text['system_barcode_setting'] ;?></div>
+        <div class="table-container">
+            <div class="scrollbar" id="style-table">
+                <div class="force-overflow">
+                    <table id="job_table" class="table w3-table w3-hoverable">
+                        <thead id="header-table">
+                            <tr class="w3-dark-grey">
+                                <th></th>
+                                <th><?php echo $text['job_id'];?></th>
+                                <th><?php echo $text['job_name'];?></th>
+                                <th><?php echo $text['system_barcode'];?></th>
+                                <th><?php echo $text['system_barcode_from'];?></th>
+                                <th><?php echo $text['system_barcode_to'];?></th>
+                                <th><?php echo $text['system_barcode_mode'];?></th>
+                            </tr>
+                        </thead>
+
+                        <tbody style="font-size: 1.8vmin;text-align: center;" id='total_barcodes'>
+                            
+                            <?php foreach ($data['barcodes'] as $k_b =>$v_b){?>
+                                <tr>
+                                    <td style="text-align: center; vertical-align: middle;">
+                                        <input
+                                            class="form-check-input barcode-check"
+                                            type="checkbox"
+                                            name="barcode_check"
+                                            id="barcode_check_<?php echo (int)$v_b['job_id'].'_'.$k_b; ?>"
+                                            value="1"
+                                            data-job-id="<?php echo (int)$v_b['job_id']; ?>"
+                                            data-job-name="<?php echo htmlspecialchars($v_b['JOBname'], ENT_QUOTES); ?>"
+                                            data-barcode="<?php echo htmlspecialchars($v_b['barcode'], ENT_QUOTES); ?>"
+                                            data-range-from="<?php echo (int)$v_b['range_from']; ?>"
+                                            data-range-count="<?php echo (int)$v_b['range_count']; ?>"
+                                            data-barcode-mode="<?php echo (int)$v_b['barcode_mode']; ?>"
+                                            <?php /* 若有 seq_id 就帶上，沒有就 -1 */ ?>
+                                            data-seq-id="<?php echo isset($v_b['seq_id']) ? (int)$v_b['seq_id'] : -1; ?>"
+                                            style="zoom:1.2">
+                                    </td>
+
+                                    <td><?php echo $v_b['job_id'];?></td>
+                                    <td><?php echo $v_b['JOBname'];?></td>
+                                    <td><?php echo $v_b['barcode'];?></td>
+                                    <td><?php echo $v_b['range_from'];?></td>
+                                    <td><?php echo $v_b['range_count'];?></td>
+                                    <td><?php echo $data['barcode_mode'][$v_b['barcode_mode']];?></td>
                                 </tr>
-                            </thead>
-
-                            <tbody style="font-size: 1.8vmin;text-align: center;" id='total_barcodes'>
+                            <?php } ?>
                                 
-                                <?php foreach ($data['barcodes'] as $k_b =>$v_b){?>
-                                    <tr>
-                                            <td style="text-align: center; vertical-align: middle;">
-                                                <input
-                                                class="form-check-input barcode-check"
-                                                type="checkbox"
-                                                name="barcode_check"
-                                                id="barcode_check_<?php echo (int)$v_b['job_id'].'_'.$k_b; ?>"
-                                                value="1"
-                                                data-job-id="<?php echo (int)$v_b['job_id']; ?>"
-                                                data-job-name="<?php echo htmlspecialchars($v_b['JOBname'], ENT_QUOTES); ?>"
-                                                data-barcode="<?php echo htmlspecialchars($v_b['barcode'], ENT_QUOTES); ?>"
-                                                data-range-from="<?php echo (int)$v_b['range_from']; ?>"
-                                                data-range-count="<?php echo (int)$v_b['range_count']; ?>"
-                                                data-barcode-mode="<?php echo (int)$v_b['barcode_mode']; ?>"
-                                                <?php /* 若有 seq_id 就帶上，沒有就 -1 */ ?>
-                                                data-seq-id="<?php echo isset($v_b['seq_id']) ? (int)$v_b['seq_id'] : -1; ?>"
-                                                style="zoom:1.2">
-                                            </td>
-
-                                        <td><?php echo $v_b['job_id'];?></td>
-                                        <td><?php echo $v_b['JOBname'];?></td>
-                                        <td><?php echo $v_b['barcode'];?></td>
-                                        <td><?php echo $v_b['range_from'];?></td>
-                                        <td><?php echo $v_b['range_count'];?></td>
-                                        <td><?php echo $data['barcode_mode'][$v_b['barcode_mode']];?></td>
-                                    </tr>
-                                <?php } ?>
-                                
-                            </tbody>
-                        </table>
-                    </div>
+                        </tbody>
+                    </table>
                 </div>
             </div>
+        </div>
                 
-            <hr>
+        <hr>
                             
-            <div class="row t2">
-                <div class="col-3 t1"><?php echo $text['system_barcode'];?>:</div>
-                <div class="col-6 t2">
-                    <input id="barcode_name" name="barcode_name"  type="text" value="" maxlength="100" class="t3 form-control" required>
-                </div>
+        <div class="row t2">
+            <div class="col-3 t1"><?php echo $text['system_barcode'];?>:</div>
+            <div class="col-6 t2">
+                <input id="barcode_name" name="barcode_name"  type="text" value="" maxlength="100" class="t3 form-control" required>
             </div>
-            <div class="row t2">
-                <div class="col-3 t1"><?php echo $text['system_barcode_match_from'];?>:</div>
-                <div class="col-3 t2">
-                    <input id="barcode_from" name="barcode_from" type="text" value="1" class="t3 form-control">
-                </div>
+        </div>
+        <div class="row t2">
+            <div class="col-3 t1"><?php echo $text['system_barcode_match_from'];?>:</div>
+            <div class="col-3 t2">
+                <input id="barcode_from" name="barcode_from" type="text" value="1" class="t3 form-control">
             </div>
-            <div class="row t2">
-                <div class="col-3 t1"><?php echo $text['system_barcode_match_to'];?>:</div>
-                <div class="col-3 t2">
-                    <input id="barcode_count" name="barcode_count" type="text" value="" class="t3 form-control">
-                </div>
+        </div>
+        <div class="row t2">
+            <div class="col-3 t1"><?php echo $text['system_barcode_match_to'];?>:</div>
+            <div class="col-3 t2">
+                <input id="barcode_count" name="barcode_count" type="text" value="" class="t3 form-control">
             </div>
+        </div>
 
+        <div class="row t2">
+            <div class="col-3 t1"><?php echo $text['system_barcode_mode'];?>:</div>
+            <div class="col-3 t2">
+                <select id="barcode_mode" name="barcode_mode" onchange="toggleBarcodeSeq()">
+                    <option value="-1" disabled selected ><?php echo $text['system_barcode_setting'];?></option>
+                    <?php
+                        foreach ($data['barcode_mode'] as $key_b => $value_b) {?>
+                        <option value='<?php echo $key_b ;?>'><?php echo $text['system_barcode_mode_' . $key_b] ;?></option>
+                    <?php }?>            
+                </select>
+            </div>
+        </div>
+
+        <div class="row t2">
+            <div class="col-3 t1"><?php echo $text['system_barcode_select_job'];?>:</div>
+            <div class="col-3 t2">
+                <select id="barcode_job" name="barcode_job" onchange="fetchSeqList()" >
+                    <option value="-1"><?php echo $text['system_barcode_select_job_m'];?></option>
+                    <?php
+                        foreach ($data['job_list'] as $key => $value) {?>
+                        <option value='<?php echo $value['JOBID'];?>'><?php echo $value['JOBID']." ".$value['JOBname'];?></option>
+                    <?php }?>    
+                </select>
+            </div>
+        </div>
+        <div id="barcode_select_seq" style="display:none;">
             <div class="row t2">
-                <div class="col-3 t1"><?php echo $text['system_barcode_mode'];?>:</div>
+                <div class="col-3 t1"><?php echo $text['system_barcode_select_seq'];?>:</div>
                 <div class="col-3 t2">
-                    <select id="barcode_mode" name="barcode_mode" onchange="toggleBarcodeSeq()">
-                        <option value="-1" disabled selected ><?php echo $text['system_barcode_setting'];?></option>
-                            <?php
-                            foreach ($data['barcode_mode'] as $key_b => $value_b) {?>
-                                <option value='<?php echo $key_b ;?>'><?php echo $text['system_barcode_mode_' . $key_b] ;?></option>
-                            <?php }?>
-                            
+                    <select id="barcode_seq" name="barcode_seq">
+                        <option value="-1"><?php echo $text['system_barcode_select_seq_m'];?></option>
                     </select>
                 </div>
             </div>
+        </div>
 
-            
-            <div class="row t2">
-                <div class="col-3 t1"><?php echo $text['system_barcode_select_job'];?>:</div>
-                <div class="col-3 t2">
-                    <select id="barcode_job" name="barcode_job" onchange="fetchSeqList()" >
-                        <option value="-1"><?php echo $text['system_barcode_select_job_m'];?></option>
-                            <?php
-                            foreach ($data['job_list'] as $key => $value) {?>
-                                <option value='<?php echo $value['JOBID'];?>'><?php echo $value['JOBID']." ".$value['JOBname'];?></option>
-                            <?php }?>
-                            
-                    </select>
-                </div>
-            </div>
-            <div id="barcode_select_seq" style="display:none;">
-                <div class="row t2">
-                    <div class="col-3 t1"><?php echo $text['system_barcode_select_seq'];?>:</div>
-                    <div class="col-3 t2">
-                        <select id="barcode_seq" name="barcode_seq">
-                            <option value="-1"><?php echo $text['system_barcode_select_seq_m'];?></option>
-                            
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <div style="text-align: center;margin-top: 30px; margin-bottom:10px">
-                <button class="all-btn w3-button w3-border w3-round-large" onclick="update_barcode()" ><?php echo $text['save'];?></button>&nbsp;&nbsp;
-                <button class="all-btn w3-button w3-border w3-round-large" onclick="delete_barcode_item()" ><?php echo $text['delete_text'];?></button>
-            </div>               
-</div>
+        <div style="text-align: center;margin-top: 30px; margin-bottom:10px">
+            <button class="all-btn w3-button w3-border w3-round-large" onclick="update_barcode()" ><?php echo $text['save'];?></button>&nbsp;&nbsp;
+            <button class="all-btn w3-button w3-border w3-round-large" onclick="delete_barcode_item()" ><?php echo $text['delete_text'];?></button>
+        </div>               
+    </div>
 
 <script>
 
@@ -436,8 +432,5 @@
         );
     }
 
-
-
-
-
 </script>
+

@@ -13,9 +13,9 @@
                                 <th><?php echo $text['job_name'];?></th>
                                 <th><?php echo $text['system_barcode'];?></th>
                                 <th><?php echo $text['system_barcode_from'];?></th>
-                                <th>to</th>
-                                <th>barcode mode</th>
-                                <th>Count</th>
+                                <th><?php echo $text['system_barcode_to'];?></th>
+                                <th><?php echo $text['system_barcode_mode'];?></th>
+                                <th><?php echo $text['system_barcode_count'];?></th>
                             </tr>
                         </thead>
 

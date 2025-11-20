@@ -75,10 +75,13 @@ class Sequence{
                             unscrew_rpm = :speed,
                             unscrew_torque_threshold = :torque_threshold,
                             unscrew_dir = :direction,
-                            unscrew_force = :force_number,
+                            unscrew_force = :unscrew_force,
                             Thread_Calcu = :Thread_Calcu,
                             dt_time = :dt_time,
-                            tt_time = :tt_time
+                            tt_time = :tt_time,
+                            total_angle_limit = :total_angle_limit,
+                            total_angle_lower = :total_angle_lower
+
                         WHERE JOBID = :job_id AND SEQID = :seq_id";
 
                 $statement = $this->db_iDas->prepare($sql);
@@ -95,10 +98,12 @@ class Sequence{
                 $statement->bindValue(':speed', $data['speed']);
                 $statement->bindValue(':torque_threshold', $data['torque_threshold']);
                 $statement->bindValue(':direction', $data['direction']);
-                $statement->bindValue(':force_number', $data['force_number']);
+                $statement->bindValue(':unscrew_force', $data['unscrew_force']);
                 $statement->bindValue(':Thread_Calcu', $data['Thread_Calcu']);
                 $statement->bindValue(':dt_time', $data['dt_time']);
                 $statement->bindValue(':tt_time', $data['tt_time']);
+                $statement->bindValue(':total_angle_limit', $data['total_angle_limit']);
+                $statement->bindValue(':total_angle_lower', $data['total_angle_lower']);
     
                 break;
 
@@ -200,6 +205,8 @@ class Sequence{
                                         unscrew_torque_threshold = :unscrew_torque_threshold,
                                         dt_time = :dt_time,
                                         tt_time = :tt_time,
+                                        total_angle_limit = :total_angle_limit,
+                                        total_angle_lower = :total_angle_lower,
                                         delay = :delay 
                                 WHERE JOBID = :job_id AND SEQID = :seq_id";
             $statement = $this->db_iDas->prepare($sql);
@@ -216,12 +223,14 @@ class Sequence{
             $statement->bindValue(':accu_angle', $seq_data['accumulate_angle_option']);
             $statement->bindValue(':Thread_Calcu', $seq_data['Thread_Calcu']);
             $statement->bindValue(':unscrew_mode', $seq_data['reverse_mode']);
-            $statement->bindValue(':unscrew_force', $seq_data['force_number']);
+            $statement->bindValue(':unscrew_force', $seq_data['unscrew_force']);
             $statement->bindValue(':unscrew_rpm', $seq_data['speed']);
             $statement->bindValue(':unscrew_dir', $seq_data['direction']);
             $statement->bindValue(':unscrew_torque_threshold', $seq_data['torque_threshold']);
             $statement->bindValue(':dt_time', $seq_data['dt_time']);
             $statement->bindValue(':tt_time', $seq_data['tt_time']);
+            $statement->bindValue(':total_angle_limit', $seq_data['total_angle_limit']);
+            $statement->bindValue(':total_angle_lower', $seq_data['total_angle_lower']);
             $statement->bindValue(':delay', $seq_data['timeout']);
 
             $results = $statement->execute();
@@ -229,10 +238,10 @@ class Sequence{
         }else{//表示job_id & seq_id不存在，用insert
             $sql = "INSERT INTO SEQ_lst 
             ('JOBID','SEQID','SEQname','type','seq_repeat','ok_seq','ok_stop','ok_screw','unscrew_count','ng_stop',
-            'ng_unscrew','accu_angle','unscrew_mode','unscrew_force','unscrew_rpm','unscrew_dir','unscrew_torque_threshold','dt_time','tt_time','delay') 
+            'ng_unscrew','accu_angle','unscrew_mode','unscrew_force','unscrew_rpm','unscrew_dir','unscrew_torque_threshold','dt_time','tt_time','total_angle_limit','total_angle_lower','delay') 
             VALUES 
             (:JOBID,:SEQID,:SEQname,:type,:seq_repeat,:ok_seq,:ok_stop,:ok_screw,:unscrew_count,
-            :ng_stop,:ng_unscrew,:accu_angle,:unscrew_mode,:unscrew_force,:unscrew_rpm,:unscrew_dir,:unscrew_torque_threshold,:dt_time,:tt_time,:delay);";
+            :ng_stop,:ng_unscrew,:accu_angle,:unscrew_mode,:unscrew_force,:unscrew_rpm,:unscrew_dir,:unscrew_torque_threshold,:dt_time,:tt_time,:total_angle_limit,:total_angle_lower,:delay);";
 
             $statement = $this->db_iDas->prepare($sql);
             $statement->bindValue(':JOBID', $seq_data['job_id']);
@@ -248,13 +257,15 @@ class Sequence{
             $statement->bindValue(':ng_unscrew', $seq_data['ng_reverse_option']);
             $statement->bindValue(':accu_angle', $seq_data['accumulate_angle_option']);
             $statement->bindValue(':unscrew_mode', $seq_data['reverse_mode']);
-            $statement->bindValue(':unscrew_force', $seq_data['force_number']);
+            $statement->bindValue(':unscrew_force', $seq_data['unscrew_force']);
             $statement->bindValue(':unscrew_rpm', $seq_data['speed']);
             $statement->bindValue(':unscrew_dir', $seq_data['direction']);
             $statement->bindValue(':unscrew_torque_threshold', $seq_data['torque_threshold']);
             $statement->bindValue(':dt_time', $seq_data['dt_time']);
             $statement->bindValue(':tt_time', $seq_data['tt_time']);
             $statement->bindValue(':delay', $seq_data['timeout']);
+            $statement->bindValue(':total_angle_limit', $seq_data['total_angle_limit']);
+            $statement->bindValue(':total_angle_lower', $seq_data['total_angle_lower']);
  
             $results = $statement->execute();
             
@@ -300,11 +311,11 @@ class Sequence{
             $sql = "INSERT INTO 'SEQ_lst' 
                     ('JOBID', 'SEQID', 'SEQname', 'type', 'seq_repeat', 'ok_seq', 'ok_stop', 'ok_screw',
                     'unscrew_count', 'ng_stop', 'ng_unscrew', 'accu_angle', 'unscrew_mode', 'unscrew_force',
-                    'unscrew_rpm', 'unscrew_dir', 'unscrew_torque_threshold', 'delay', 'image', 'message', 'dt_time', 'tt_time')
+                    'unscrew_rpm', 'unscrew_dir', 'unscrew_torque_threshold', 'delay', 'image', 'message', 'dt_time', 'tt_time', 'total_angle_limit', 'total_angle_lower')
                     VALUES 
                     (:JOBID, :SEQID, :SEQname, :type, :seq_repeat, :ok_seq, :ok_stop, :ok_screw,
                     :unscrew_count, :ng_stop, :ng_unscrew, :accu_angle, :unscrew_mode, :unscrew_force,
-                    :unscrew_rpm, :unscrew_dir, :unscrew_torque_threshold, :delay, :image, :message, :dt_time, :tt_time)";
+                    :unscrew_rpm, :unscrew_dir, :unscrew_torque_threshold, :delay, :image, :message, :dt_time, :tt_time, :total_angle_limit, :total_angle_lower)";
 
             $statement = $this->db_iDas->prepare($sql);
             $statement->bindValue(':JOBID', $seq_data['job_id']);
@@ -329,6 +340,8 @@ class Sequence{
             $statement->bindValue(':message', $seq_data['message']);
             $statement->bindValue(':dt_time', 0);
             $statement->bindValue(':tt_time', 0);
+            $statement->bindValue(':total_angle_limit', 0);
+            $statement->bindValue(':total_angle_lower', 0);
  
             return $statement->execute();
         }
@@ -358,41 +371,46 @@ class Sequence{
 
         }else{//表示job_id & seq_id不存在，用insert
 
-            $sql = "INSERT INTO 'SEQ_lst' (
-                        'JOBID','SEQID','SEQname','type','seq_repeat',
-                        'ok_seq','ok_stop','ok_screw','unscrew_count',
-                        'ng_stop','ng_unscrew','accu_angle','unscrew_mode',
-                        'unscrew_force','unscrew_rpm','unscrew_dir',
-                        'unscrew_torque_threshold','delay', 'dt_time', 'tt_time'
+           $sql = "INSERT INTO SEQ_lst (
+                        JOBID, SEQID, SEQname, type, seq_repeat,
+                        ok_seq, ok_stop, ok_screw, unscrew_count,
+                        ng_stop, ng_unscrew, accu_angle,
+                        unscrew_mode, unscrew_force, unscrew_rpm, unscrew_dir,
+                        unscrew_torque_threshold, dt_time, tt_time,
+                        total_angle_limit, total_angle_lower, delay
                     ) VALUES (
-                        :JOBID,:SEQID,:SEQname,:type,:seq_repeat,
-                        :ok_seq,:ok_stop,:ok_screw,:unscrew_count,
-                        :ng_stop,:ng_unscrew,:accu_angle,:unscrew_mode,
-                        :unscrew_force,:unscrew_rpm,:unscrew_dir,
-                        :unscrew_torque_threshold,:delay, :dt_time, :tt_time
-                    ); ";
+                        :JOBID, :SEQID, :SEQname, :type, :seq_repeat,
+                        :ok_seq, :ok_stop, :ok_screw, :unscrew_count,
+                        :ng_stop, :ng_unscrew, :accu_angle,
+                        :unscrew_mode, :unscrew_force, :unscrew_rpm, :unscrew_dir,
+                        :unscrew_torque_threshold, :dt_time, :tt_time,
+                        :total_angle_limit, :total_angle_lower, :delay
+                    );";
 
             $statement = $this->db_iDas->prepare($sql);
+
             $statement->bindValue(':JOBID', $seq_data['job_id']);
             $statement->bindValue(':SEQID', $seq_data['seq_id']);
             $statement->bindValue(':SEQname', $seq_data['seq_name']);
             $statement->bindValue(':type', $seq_data['seq_type']);
-            $statement->bindValue(':seq_repeat', 1);
-            $statement->bindValue(':ok_seq', 1);
-            $statement->bindValue(':ok_stop', 0);
-            $statement->bindValue(':ok_screw', 1);//???
-            $statement->bindValue(':unscrew_count', 1);
-            $statement->bindValue(':ng_stop', 0);
-            $statement->bindValue(':ng_unscrew', 1);
-            $statement->bindValue(':accu_angle', 1);
-            $statement->bindValue(':unscrew_mode', 1);
-            $statement->bindValue(':unscrew_force', 50);
-            $statement->bindValue(':unscrew_rpm', 300);
-            $statement->bindValue(':unscrew_dir', 0);
-            $statement->bindValue(':unscrew_torque_threshold', 0);
+            $statement->bindValue(':seq_repeat', $seq_data['tightening_repeat']);
+            $statement->bindValue(':ok_seq', $seq_data['ok_seq']);
+            $statement->bindValue(':ok_stop', $seq_data['seq_stop']);
+            $statement->bindValue(':ok_screw', 1);
+            $statement->bindValue(':unscrew_count', $seq_data['reverse_count_option']);
+            $statement->bindValue(':ng_stop', $seq_data['ng_stop']);
+            $statement->bindValue(':ng_unscrew', $seq_data['ng_reverse_option']);
+            $statement->bindValue(':accu_angle', $seq_data['accumulate_angle_option']);
+            $statement->bindValue(':unscrew_mode', $seq_data['reverse_mode']);
+            $statement->bindValue(':unscrew_force', $seq_data['unscrew_force']);
+            $statement->bindValue(':unscrew_rpm', $seq_data['speed']);
+            $statement->bindValue(':unscrew_dir', $seq_data['direction']);
+            $statement->bindValue(':unscrew_torque_threshold', $seq_data['torque_threshold']);
+            $statement->bindValue(':dt_time', $seq_data['dt_time']);
+            $statement->bindValue(':tt_time', $seq_data['tt_time']);
+            $statement->bindValue(':total_angle_limit', $seq_data['total_angle_limit']);
+            $statement->bindValue(':total_angle_lower', $seq_data['total_angle_lower']);
             $statement->bindValue(':delay', $seq_data['timeout']);
-            $statement->bindValue(':dt_time', 0);
-            $statement->bindValue(':tt_time', 0);
 
             $results = $statement->execute();
             
@@ -434,13 +452,13 @@ class Sequence{
                         'ng_stop','ng_unscrew','accu_angle','unscrew_mode',
                         'unscrew_force','unscrew_rpm','unscrew_dir',
                         'unscrew_torque_threshold','delay','input_pin_no',
-                        'wave','event_id', 'dt_time', 'tt_time'
+                        'wave','event_id', 'dt_time', 'tt_time', 'total_angle_limit', 'total_angle_lower'
                     ) VALUES (
                         :JOBID,:SEQID,:SEQname,:type,:seq_repeat,:ok_seq,
                         :ok_stop,:ok_screw,:unscrew_count,:ng_stop,
                         :ng_unscrew,:accu_angle,:unscrew_mode,:unscrew_force,
                         :unscrew_rpm,:unscrew_dir,:unscrew_torque_threshold,
-                        :delay,:input_pin_no,:wave,:event_id, :dt_time, :tt_time 
+                        :delay,:input_pin_no,:wave,:event_id, :dt_time, :tt_time, :total_angle_limit, :total_angle_lower 
                     ); ";
 
             $statement = $this->db_iDas->prepare($sql);
@@ -467,6 +485,8 @@ class Sequence{
             $statement->bindValue(':event_id', 1000);
             $statement->bindValue(':dt_time', 0);
             $statement->bindValue(':tt_time', 0);
+            $statement->bindValue(':total_angle_limit', 0);
+            $statement->bindValue(':total_angle_lower', 0);
 
             $results = $statement->execute();
             
@@ -509,13 +529,13 @@ class Sequence{
                         'ng_stop','ng_unscrew','accu_angle','unscrew_mode',
                         'unscrew_force','unscrew_rpm','unscrew_dir',
                         'unscrew_torque_threshold','delay','output_pin_no',
-                        'wave','wave_on','event_id', 'dt_time', 'tt_time'
+                        'wave','wave_on','event_id', 'dt_time', 'tt_time', 'total_angle_limit', 'total_angle_lower'
                     ) VALUES (
                         :JOBID,:SEQID,:SEQname,:type,:seq_repeat,:ok_seq,
                         :ok_stop,:ok_screw,:unscrew_count,:ng_stop,
                         :ng_unscrew,:accu_angle,:unscrew_mode,:unscrew_force,
                         :unscrew_rpm,:unscrew_dir,:unscrew_torque_threshold,
-                        :delay,:output_pin_no,:wave,:wave_on,:event_id, :dt_time, :tt_time
+                        :delay,:output_pin_no,:wave,:wave_on,:event_id, :dt_time, :tt_time, :total_angle_limit, :total_angle_lower
                     ); ";
 
             $statement = $this->db_iDas->prepare($sql);
@@ -543,6 +563,8 @@ class Sequence{
             $statement->bindValue(':event_id', 2000);
             $statement->bindValue(':dt_time', 0);
             $statement->bindValue(':tt_time', 0);
+            $statement->bindValue(':total_angle_limit', 0);
+            $statement->bindValue(':total_angle_lower', 0);
 
             $results = $statement->execute();
             
@@ -596,12 +618,12 @@ class Sequence{
                 (JOBID, SEQID, SEQname, type, time, act, skip, seq_repeat,
                 ok_seq, ok_stop, countType, ok_screw, unscrew_count, ng_stop, ng_unscrew, interrupt_alarm, 
                 accu_angle, Thread_Calcu, unscrew_mode, unscrew_force, unscrew_rpm, unscrew_dir, unscrew_torque_threshold, 
-                image, message, delay, event_id, input_pin_no, output_pin_no, wave, wave_on, addtion, dt_time, tt_time) 
+                image, message, delay, event_id, input_pin_no, output_pin_no, wave, wave_on, addtion, dt_time, tt_time, total_angle_limit, total_angle_lower) 
                 VALUES 
                 (:JOBID, :SEQID, :SEQname, :type, :time, :act, :skip, :seq_repeat,
                 :ok_seq, :ok_stop, :countType, :ok_screw, :unscrew_count, :ng_stop, :ng_unscrew, :interrupt_alarm, 
                 :accu_angle, :Thread_Calcu, :unscrew_mode, :unscrew_force, :unscrew_rpm, :unscrew_dir, :unscrew_torque_threshold, 
-                :image, :message, :delay, :event_id, :input_pin_no, :output_pin_no, :wave, :wave_on, :addtion, :dt_time, :tt_time);";
+                :image, :message, :delay, :event_id, :input_pin_no, :output_pin_no, :wave, :wave_on, :addtion, :dt_time, :tt_time, :total_angle_limit, :total_angle_lower);";
 
         $statement = $this->db_iDas->prepare($sql);
         $insertedrecords = 0;

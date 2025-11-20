@@ -242,10 +242,12 @@ class Sequences extends Controller
                     'torque_threshold' => $_POST['torque_threshold'] ?? 0,
                     'direction' => $_POST['direction'] ?? 0,
                     'force_option' => $_POST['force_option'] ?? 0,
-                    'force_number' => $_POST['force_number'] ?? 0,
+                    'unscrew_force' => $_POST['unscrew_force'] ?? 0,
                     'Thread_Calcu' => $_POST['Thread_Calcu'] ?? '',
                     'dt_time' => $_POST['dt_time'] ?? 0,
                     'tt_time' => $_POST['tt_time'] ?? 0,
+                    'total_angle_limit' => $_POST['total_angle_limit'] ?? 0,
+                    'total_angle_lower' => $_POST['total_angle_lower'] ?? 0,
                 ];
                 break;
         }
@@ -379,7 +381,125 @@ class Sequences extends Controller
         $file = $this->MiscellaneousModel->lang_load();
         if (!empty($file)) include $file;
 
-        file_put_contents('log_create_seq.txt', json_encode($_POST) . PHP_EOL, FILE_APPEND);
+        $input_check = true;
+        $error_message = '';
+        $seq_data = [];
+
+        if($_POST['seq_type_id'] == "1"){
+
+            // 初始化數據陣列
+            if($_POST['unscrew_forcemode_val'] == 0){
+                $_POST['unscrew_force'] = $_POST['unscrew_force'];
+            }else if($_POST['unscrew_forcemode_val'] == 1){
+                $_POST['unscrew_force'] = 101;
+            }else{
+                $_POST['unscrew_force'] = 0;
+            }
+        }
+
+
+        // 初始化數據陣列
+        if($_POST['unscrew_forcemode_val'] == 0){
+            $_POST['unscrew_force'] = $_POST['unscrew_force'];
+        }else if($_POST['unscrew_forcemode_val'] == 1){
+            $_POST['unscrew_force'] = 101;
+        }else{
+            $_POST['unscrew_force'] = 0;
+        }
+        
+
+        
+
+        // 共用必填欄位
+        $required_common = ['job_id', 'seq_id', 'seq_type_id'];
+        foreach ($required_common as $field) {
+            if (!isset($_POST[$field])) {
+                $input_check = false;
+                $error_message .= $field . ',';
+            } else {
+                $key = ($field === 'seq_type_id') ? 'seq_type' : $field;
+                $seq_data[$key] = $_POST[$field];
+            }
+        }
+
+        if (!$input_check) {
+            echo json_encode(['result' => 'fail', 'error_message' => rtrim($error_message, ',')]);
+            return;
+        }
+
+
+        if(!empty($seq_data)){
+
+               $seq_data = array(
+                'job_id' => $_POST['job_id'] ?? null,
+                'SEQID'  => $_POST['seq_id'] ?? null,
+                'SEQname' => $_POST['seq_name'] ?? null,
+                'time' => $_POST['time'] ?? null,
+                'type' => $_POST['type'] ?? null,
+                'act' => $_POST['act'] ?? 0,
+                'skip' => $_POST['skip'] ?? 0,
+                'seq_repeat' => $_POST['tightening_repeat'] ?? null,
+                'timeout' => $_POST['timeout'] ?? null,
+                'dt_time' => $_POST['dt_time'] ?? 0,
+                'tt_time' => $_POST['tt_time'] ?? 0,
+                'ok_seq' => $_POST['ok_seq_val'] ?? null,
+                'ok_stop' => $_POST['ok_stop_val'] ?? null,
+                'countType' =>$_POST['countType'] ?? 1,
+                'ok_screw'  =>$_POST['ok_screw'] ?? 1,
+                'ng_stop' => $_POST['ng_stop'] ?? null,
+                'ng_unscrew' => $_POST['ng_unscrew_val'] ?? null,
+                'interrupt_alarm' => $_POST['interrupt_alarm'] ?? null,
+                'accu_angle' => $_POST['accu_angle_val'] ?? null,
+                'Thread_Calcu' => $_POST['angle_calculation_data'] ?? null,
+                'unscrew_mode' => $_POST['unscrew_mode_val'] ?? 1,
+                'unscrew_force' => $_POST['unscrew_force'] ?? 50,
+                'unscrew_rpm' => $_POST['unscrew_rpm'] ?? 300,
+                'unscrew_dir' => $_POST['unscrew_dir_val'] ?? 0,
+                'image' => $_POST['image'] ?? '',
+                'message' => $_POST['message'] ?? '',
+                'delay' => $_POST['delay'] ?? null,
+                'input' => $_POST['input'] ?? null,
+                'input_signal' => $_POST['input_signal'] ?? 1,
+                'output' => $_POST['output'] ?? null,
+                'output_signal' => $_POST['output_signal'] ?? 1,
+                'output_durat' => $_POST['output_durat'] ?? 100,
+                'addtion' => $_POST['addtion'] ?? null,
+                'unscrew_count_switch' => $_POST['unscrew_count_switch_val'] ?? null,
+                'unscrew_torque_threshold' => $_POST['unscrew_torque_threshold'] ?? null,
+                'seq_unit' => $_POST['seq_unit'] ?? 0,
+                'unscrew_angle_threshold' => $_POST['unscrew_angle_threshold'] ?? 0,
+                'dt_time' => $_POST['dt_time'] ?? 0,
+                'tt_time' => $_POST['tt_time'] ?? 0,
+                'total_high_angle' => $_POST['total_angle_limit'] ?? 0,
+                'total_high_angle' => $_POST['total_angle_limit'] ?? 0,
+                'total_angle_lower' => $_POST['total_angle_lower'] ?? 0,
+
+            );
+
+        }
+
+        var_dump($_POST['seq_type_id']);
+
+        echo "<pre>";
+        print_r($_POST);
+        echo "</pre>";
+        
+        echo "<pre>";
+        print_r($seq_data);
+        echo "</pre>";
+
+
+        
+        die();
+
+
+
+
+
+
+
+
+       /* file_put_contents('log_create_seq.txt', json_encode($_POST) . PHP_EOL, FILE_APPEND);
 
         $input_check = true;
         $error_message = '';
@@ -406,7 +526,7 @@ class Sequences extends Controller
         $seq_type_fields = [
             1 => ['seq_name', 'tightening_repeat', 'timeout', 'ok_seq', 'seq_stop', 'reverse_count_option',
                 'ng_stop', 'ng_reverse_option', 'accumulate_angle_option', 'reverse_mode', 'speed',
-                'torque_threshold', 'direction', 'force_option', 'force_number', 'Thread_Calcu', 'dt_time', 'tt_time'],
+                'torque_threshold', 'direction', 'force_option', 'unscrew_force', 'Thread_Calcu', 'dt_time', 'tt_time', 'total_angle_limit', 'total_angle_lower'],
             2 => ['seq_name', 'timeout', 'text_message', 'image'],
             3 => ['seq_name', 'timeout'],
             4 => ['seq_name', 'input_pin_no', 'wave'],
@@ -450,8 +570,6 @@ class Sequences extends Controller
         $method = $model_map[$seq_type] ?? null;
 
 
-        //var_dump($method);die();
-
         $res = ($method && method_exists($this->sequenceModel, $method))
             ? $this->sequenceModel->{$method}($seq_data)
             : false;
@@ -460,7 +578,7 @@ class Sequences extends Controller
         echo json_encode([
             'res_type' => $res ? 'Success' : 'Error',
             'res_msg'  => $res ? ($text['success'] ?? 'Success') : ($text['fail'] ?? 'Fail')
-        ]);
+        ]);*/
     }
 
 
@@ -580,6 +698,8 @@ class Sequences extends Controller
                 $new_temp_seq[$kk_seq]['addtion'] = null;
                 $new_temp_seq[$kk_seq]['dt_time'] = $val['dt_time'];
                 $new_temp_seq[$kk_seq]['tt_time'] = $val['tt_time'];
+                $new_temp_seq[$kk_seq]['total_angle_limit'] = $val['total_angle_limit'];
+                $new_temp_seq[$kk_seq]['total_angle_lower'] = $val['total_angle_lower'];
 
 
             }  

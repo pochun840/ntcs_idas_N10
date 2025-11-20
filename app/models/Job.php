@@ -1,6 +1,7 @@
 <?php
 
 class Job{
+    
     private $db_iDas;
     // 在建構子將 Database 物件實例化
     public function __construct(){

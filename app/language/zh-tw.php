@@ -108,6 +108,8 @@ $text['OK_Seq'] = '工序完成信號'; // mobile
 $text['Seq_Stop'] = '工序完成停止'; // mobile
 $text['NG_Stop'] = 'NG停止';
 $text['Accumulate_Angle'] = '累計角度';
+$text['total_high_angle'] = '總角度上限';
+$text['total_low_angle'] = '總角度下限';
 $text['Angle_Calculation'] = '角度計算';
 $text['step'] = '步驟';
 $text['rev_count'] = '拆螺絲計數';
@@ -323,7 +325,6 @@ $text['data_history_success'] = '歷史紀錄資料';
 $text['data_history_fail'] = '鎖附失敗資料';
 $text['start_date'] = '開始日期';
 $text['end_date'] = '結束日期';
-$text['download_chart'] = '曲線圖下載';
 
 $text['column_no'] = '編號';
 $text['column_datetime'] = '時間';
@@ -396,7 +397,7 @@ $text['system_setting'] = '系統設定';
 $text['system_barcode_setting'] = '條碼設定';
 $text['system_connect_setting'] = '連線設定';
 
-// Controller Setting
+// Controller Setting 
 $text['system_id'] = 'ID';
 $text['system_name'] = '名稱';
 $text['system_diskfull_warning'] = '磁碟已滿警告(%)';
@@ -466,6 +467,7 @@ $text['system_barcode_from'] = '從';
 $text['system_barcode_to'] = '個數';
 $text['system_barcode_match_from'] = '匹配從';
 $text['system_barcode_match_to'] = '匹配個數';
+$text['system_barcode_count'] = '位數';//mobile
 $text['system_barcode_mode'] = '條碼模式';
 $text['system_barcode_select_job'] = '選擇工作';
 $text['system_barcode_select_seq'] = '選擇工序';
