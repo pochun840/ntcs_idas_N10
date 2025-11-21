@@ -7,6 +7,8 @@ class Outputs extends Controller
     private $InputModel;
     private $MiscellaneousModel;
     private $jobModel;
+    Private $deviceId;
+
     // 在建構子中將 Post 物件（Model）實例化
     public function __construct()
     {
@@ -14,10 +16,15 @@ class Outputs extends Controller
         $this->InputModel = $this->model('Input');
         $this->MiscellaneousModel = $this->model('Miscellaneous');
         $this->jobModel = $this->model('Job');
+
+        #該死的需求 去撈控制器的資料庫 同步找出modbus id 
+        //$this->deviceId = $this->ntcs_device_db_sysnc();
+
     }
 
     // 取得所有Jobs
     public function index(){
+
 
         //要檢查是否有alljobinput，有的話要直接帶入
         $isMobile     = $this->isMobileCheck();
@@ -32,6 +39,8 @@ class Outputs extends Controller
             foreach($joblist as $kk =>$vv){
                 $job_list_new[$vv['JOBID']] =$vv;  
             }
+        }else{
+            $job_list_new = '';
         }
 
         $this->ntcs_data_db_sysnc();
@@ -117,6 +126,7 @@ class Outputs extends Controller
             'tempA' => $tempA,
             'language' => $_COOKIE['language'] ?? 'en-us',
             'focused_jobid' =>  $job_id,
+            'check_jobid_unified' => $check
 
         ]);
         
@@ -155,7 +165,6 @@ class Outputs extends Controller
         $event = $this->MiscellaneousModel->details('io_output');
         $input_check = true;
         $output_data = array();
-
       
         if( !empty($_POST['job_id']) && isset($_POST['job_id'])  ){
             $output_data['JOBID'] = $_POST['job_id'];
@@ -179,12 +188,14 @@ class Outputs extends Controller
             $output_data['signal'] = 0;
         }
 
-
-        if( $_POST['wave_on'] == ""){
-            $output_data['durate'] = '';
-        }else{
-            $output_data['durate'] = $_POST['wave_on'];
+        if($output_data['signal'] != 1){
+            $output_data['durate'] = 100;
         }
+
+        if($_POST['wave'] == "1"){
+            $output_data['durate'] = $_POST["wave_on"];
+        }
+
 
         if($input_check){
       
@@ -246,10 +257,11 @@ class Outputs extends Controller
                     $output_data[$key]['durate'] = $val['durate'];
 
 
-                    if($output_data[$key]['durate'] != 1 ){
+                    if($output_data[$key]['signal'] != 1 ){
                         $output_data[$key]['durate'] = 100;
                     }
 
+                    
                     $res = $this->OutputModel->create_output($output_data[$key]);
                     $result = array();
                     if($res){
@@ -390,71 +402,49 @@ class Outputs extends Controller
     public function edit_output_event(){
 
         $file = $this->MiscellaneousModel->lang_load();
-        if(!empty($file)){
-            include $file;
+        if (!empty($file)) include $file;
+
+        $eventMap = $this->MiscellaneousModel->details('io_output'); // EvenID => i18n key
+       
+
+        $result = ['res_type' => 'Error', 'res_msg' => ''];
+
+        // ---- 讀取輸入 ----
+        $jobId  = $_POST['job_id']           ?? null;
+        $pin    = $_POST['output_pin']       ?? null;
+        $newEv  = $_POST['output_event']     ?? null;     // 目標事件 (ex: NG)
+        $signal = isset($_POST['wave']) ? (int)$_POST['wave'] : 0;
+        $durate = $_POST['wave_on']          ?? '';
+        // 可忽略 old_output_event，因為我們改成「先刪後建」
+        // $oldEv  = $_POST['old_output_event'] ?? null;
+
+        if (!$jobId || !$pin || !$newEv) {
+            $label = $text[$eventMap[$newEv] ?? $newEv] ?? $newEv;
+            $result['res_msg'] = $text['edit_event'].$text['job_id'].':'.$jobId.','.$text['event'].':'.$label.'  '.$text['fail'];
+            echo json_encode($result); return;
         }
 
-        $event  = $this->MiscellaneousModel->details('io_output');
-        $result = array();
+        // signal=0/2 時你的需求是固定 100（照你目前程式）
+        if ($signal === 0 || $signal === 2) {
+            $durate = 100;
+        }
+
+        if(!empty($_POST['job_id'])){
+            
+            $this->OutputModel->delete_job_old_event($jobId,$_POST['old_output_event'],$_POST['old_output_pin']);
+            $this->OutputModel->insert_output_event($jobId, $pin, $newEv, $signal, $durate);
+
+            $label = $text[$eventMap[$newEv] ?? $newEv] ?? $newEv;
+            $result['res_type'] = 'Success';
+            $result['res_msg']  = $text['edit_event'].$text['job_id'].':'.$jobId.','.$text['event'].':'.$label.'  '.$text['success'];
+            echo json_encode($result);
+        }
+
         
-        $input_check = true;
+    }   
 
-        $output_data = array();
-        if( !empty($_POST['job_id']) && isset($_POST['job_id'])  ){
-            $output_data['JOBID'] = $_POST['job_id'];
-        }else{ 
-            $input_check = false; 
-        }
-        if( !empty($_POST['output_pin']) && isset($_POST['output_pin'])  ){
-            $output_data['Pin'] = $_POST['output_pin'];
-        }else{ 
-            $input_check = false; 
-        }
-        if( !empty($_POST['output_event']) && isset($_POST['output_event'])  ){
-            $output_data['EvenID'] = $_POST['output_event'];
-        }else{ 
-            $input_check = false; 
-        }
 
-        if(!empty($_POST['wave'])){
-            $output_data['signal'] = $_POST['wave'];
-        }else{ 
-            $output_data['signal'] = 0;
-        }
 
-        if($_POST['wave_on'] == ""){
-            $output_data['durate'] = '';
-        }else{
-            $output_data['durate'] = $_POST['wave_on'];
-        }
-
-        if($output_data['signal'] == 0 || $output_data['signal'] == 2){
-            $output_data['durate'] = '';
-        }
-
-        // ➤ 這行是關鍵，先給預設值
-        $res = false;
-
-        $count = $this->OutputModel->check_event_conflict($output_data['JOBID'],$output_data['EvenID']);
-        if ($count > 0){
-            $res = $this->OutputModel->edit_output($output_data);
-        }
-
-        if($res){
-            $res_type = 'Success';
-            $res_msg = $text['edit_event'].$text['job_id'].':'.$output_data['JOBID'].','.$text['event'].':'.$text[$event[$output_data['EvenID']]]."  ".$text['success'];
-        }else{
-            $res_type = 'Error';
-            $res_msg = $text['edit_event'].$text['job_id'].':'.$output_data['JOBID'].','.$text['event'].':'.$text[$event[$output_data['EvenID']]]."  ".$text['fail'];
-        }
-
-        $result = array(
-            'res_type' => $res_type,
-            'res_msg'  => $res_msg 
-        );
-
-        echo json_encode($result);
-    }
 
 
     public function get_other_event_by_job_id(){
@@ -484,6 +474,28 @@ class Outputs extends Controller
     public function set_output_unified(){
 
     
+    }
+
+
+
+    public function check_jobid_unified(){
+        
+        $file = $this->MiscellaneousModel->lang_load();
+        if(!empty($file)){
+            include $file;
+        }  
+
+        $input_check = true;
+        if( !empty($_POST['job_id']) && isset($_POST['job_id'])  ){
+            $output_job_id = $_POST['job_id'];
+        }else{ 
+            $input_check = false; 
+        }
+
+        $check = $this->OutputModel->check_output_unified_by_job_id($output_job_id);  
+
+        return $check;
+
     }
 }
 

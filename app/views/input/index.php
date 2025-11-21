@@ -3,6 +3,10 @@
   $focusedJobId = isset($data['focused_jobid']) ? $data['focused_jobid'] : null;
 ?>
 
+
+
+
+
 <div class="container-ms">
     <div class="w3-text-white w3-center">
         <table class="no-border">
@@ -16,11 +20,12 @@
     <div class="main-content">
                 <div class="center-content">
             <div class="topnav">
-                <label style="font-size:20px;color: #000; padding-left: 2%" for="job_id"><?php echo $text['job_id'];?> :</label>&nbsp;
+               
+                <label style="font-size:2.5vmin;color: #000; padding-left: 2%" for="job_id"><?php echo $text['job_id'];?> :</label>&nbsp;
                 <input type="text" id="job_id" name="job_id" size="8" maxlength="20" value="" disabled>
 
                     <button id="Button_Select" type="button" onclick="document.getElementById('JobSelect').style.display='block'"
-                            style="height:30px;width:100px;font-size:20px;padding: 0; vertical-align: middle;">
+                            style="height:30px;width:100px;font-size:2.5vmin; line-height:30px; padding: 0; vertical-align: middle; margin-top: -10px;">
                         <?php echo $text['select'];?>
                     </button>
 
@@ -57,10 +62,10 @@
                 <!--<img src="./img/low.png" style="max-width: 50px;">-->
                 <!--<img src="./img/high.png" style="max-width: 50px;">-->
                 <div id="TableInputSetting">
-                    <div class="table-container">
+                    <div class="table-input">
                         <div class="scrollbar" id="style-inputtable">
                             <div class="scrollbar-force-overflow">
-                                <table id="input_table" class="table w3-table">
+                                <table id="input_table" class="table w3-table-all w3-hoverable">
                                     <thead class="header-table">
                                         <tr class="w3-dark-grey">
                                             <th><?php echo $text['event'];?></th>
@@ -93,38 +98,38 @@
                             <input id="S1" name="New_Submit" type="button" value="<?php echo $text['New'];?>" tabindex="1" onclick="crud_job_event('new')">
                             <input id="S2" name="Edit_Submit" type="button" value="<?php echo $text['Edit'];?>" tabindex="1" onclick="crud_job_event('edit')">
                             <input id="S3" name="Copy_Submit" type="button" value="<?php echo $text['Copy'];?>" tabindex="1" onclick="crud_job_event('copy')" >
-                            <input id="S4" name="Delete_Submit" type="button" value="<?php echo $text['Delete'];?>" tabindex="1" onclick="crud_job_event('del')">   
-                            <input id="S5" name="Table_Submit" type="button" value="<?php echo $text['Table'];?>" tabindex="1" onclick="tablesubmit('show')">
+                            <input id="S4" name="Delete_Submit" type="button" value="<?php echo $text['Delete'];?>" tabindex="1" onclick="crud_job_event('del')">
                             <input id="S6" name="Align_Submit" type="button" value="<?php echo $text['Align'];?>" tabindex="1" onclick="crud_job_event('unified')" >
                         </div>
                     </div>
                 </div>
 
                 <!-- Table Data Information -->
-                <div id="TableDataInput" style="display: none" class="table-container">
-                    <div id="Event_List" style="margin-top: 10px;background-color: #F2F2D9">
-                        <div class="w3-border-bottom" style="font-size: 20px;"><?php echo $text['Event_List'];?></div>
-                        <table class="table w3-table-all table">
+                <div id="TableDataInput" style="display: none">
+                    
+                    <div id="Event_List" align="center" style="margin-top: 10px;background-color: #F2F2D9">
+                        <div class="w3-border-bottom" style="font-size: 20px;">Event List</div>
+                        <table class="w3-table-all">
                             <tr>
                                 <td class="w3-left-align">1-50 SW Job ID</td>
-                                <td class="w3-left-align">101 <?php echo $array[101]; ?></td>
-                                <td class="w3-left-align">102 <?php echo $array[102];?></td>
-                                <td class="w3-left-align">103 <?php echo $array[103];?></td>
-                                <td class="w3-left-align">104 <?php echo $array[104];?></td>
+                                <td class="w3-left-align">101 <?php echo $text['Disable'];?></td>
+                                <td class="w3-left-align">102 <?php echo $text['Enable'];?></td>
+                                <td class="w3-left-align">103 <?php echo $text['Clear'];?></td>
+                                <td class="w3-left-align">104 <?php echo $text['Confirm'];?></td>
                             </tr>
                             <tr>
-                                <td class="w3-left-align">105 <?php echo $array[105];?></td>
-                                <td class="w3-left-align">106 <?php echo $array[106];?></td>
-                                <td class="w3-left-align">107 <?php echo $array[107];?></td>
-                                <td class="w3-left-align">108 <?php echo $array[108];?></td>
-                                <td class="w3-left-align">109 <?php echo $array[109];?></td>
+                                <td class="w3-left-align">105 <?php echo $text['Start-IN'];?></td>
+                                <td class="w3-left-align">106 <?php echo $text['Unscrew(Remote)'];?></td>
+                                <td class="w3-left-align">107 <?php echo $text['Sequence Clear'];?></td>
+                                <td class="w3-left-align">108 <?php echo $text['Reboot'];?></td>
+                                <td class="w3-left-align">109 <?php echo $text['Gate Once'];?></td>
                             </tr>
                             <tr>
-                                <td class="w3-left-align">110 <?php echo $array[110];?></td>
-                                <td class="w3-left-align">111 <?php echo $array[111];?></td>
-                                <td class="w3-left-align">112 <?php echo $array[112];?></td>
-                                <td class="w3-left-align">113 <?php echo $array[113];?></td>
-                                <td class="w3-left-align">114 <?php echo $array[114];?></td>
+                                <td class="w3-left-align">110 <?php echo $text['UDEFINE'];?>1</td>
+                                <td class="w3-left-align">111 <?php echo $text['UDEFINE'];?>2</td>
+                                <td class="w3-left-align">112 <?php echo $text['UDEFINE'];?>3</td>
+                                <td class="w3-left-align">113 <?php echo $text['UDEFINE'];?>4</td>
+                                <td class="w3-left-align">114 <?php echo $text['UDEFINE'];?>5</td>
                             </tr>
                         </table>
                     </div>
@@ -239,7 +244,7 @@
 
                                 <div class="row input-pin">
                                     <div class="col-1 t1">5:</div>
-                                    <div class="col t2">
+                                    <div class="col t2" >
                     			      	<div class="col-4 form-check form-check-inline">
                     					    <input class="form-check-input" type="radio" name="pin_option" id="pin5_high" value="1">
                     					    <label class="form-check-label" for="pin5_high"><img src="./img/high.png"></label>
@@ -265,7 +270,7 @@
 
                                 <div class="row input-pin">
                                     <div class="col-1 t1">6:</div>
-                                    <div class="col t2">
+                                    <div class="col t2" >
                     			      	<div class="col-4 form-check form-check-inline">
                     					    <input class="form-check-input" type="radio" name="pin_option" id="pin6_high" value="1">
                     					    <label class="form-check-label" for="pin6_high"><img src="./img/high.png"></label>
@@ -290,7 +295,7 @@
 
                                     <div class="row input-pin">
                                         <div class="col-1 t1">7:</div>
-                                        <div class="col t2">
+                                        <div class="col t2" >
                                             <div class="col-2 form-check form-check-inline">
                                                 <input class="form-check-input" type="radio" name="pin_option" id="pin7_high" value="1">
                                                 <label class="form-check-label" for="pin7_high"><img src="./img/high.png"></label>
@@ -339,10 +344,11 @@
                         <h3 id='modal_title'><?php echo $text['edit_event'];?></h3>
                     </header>
 
+
                     <div class="modal-body">
                         <form id="new_input_form" style="padding-left: 5%">
                             <div class="row">
-                                <div for="event" class="col-3 t1"><?php echo $text['event'];?> :</div>
+                                <div for="event" class="col-3 t1">Event :</div>
                                 <div class="col-2 t2">
                                     <select id="edit_Event_Option" name ="edit_Event_Option" class="col custom-file" >
                                         <?php foreach($data['event'] as $key =>$val){?>
@@ -511,6 +517,10 @@
                                     </div>
                                 </div>
                             </div>
+
+
+                            <input type="hidden" id="old_input_event" name="old_input_event" value="">
+                      
 
                         </form>
                     </div>

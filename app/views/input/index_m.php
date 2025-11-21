@@ -4,7 +4,6 @@
 ?>
 
 
-<link rel="stylesheet" type="text/css" href="./css/input_m.css">
 
 <div class="container-ms">
     <div class="w3-text-white w3-center">
@@ -19,8 +18,8 @@
     <div class="main-content">
         <div class="center-content">
             <div class="topnav">
-                <label style="font-size:18px;color: #000; padding-left: 2%" for="job_id"><?php echo $text['job_id'];?> :</label>&nbsp;
-                <input type="text" id="job_id" name="job_id" size="8" maxlength="20" value="1" disabled style="height:30px; font-size:18px;text-align: center; background-color: #DDDDDD; border:0;">&nbsp;&nbsp;
+                <label style="font-size:3.2vmin;color: #000; padding-left: 2%" for="job_id"><?php echo $text['job_id'];?> :</label>&nbsp;
+                <input type="text" id="job_id" name="job_id" size="8" maxlength="20" value="1" disabled style="height:30px; font-size:3.2vmin;text-align: center; background-color: #DDDDDD; border:0;">&nbsp;&nbsp;
                 <button id="Button_Select" class="w3-button w3-border w3-round-large" type="button" onclick="document.getElementById('JobSelect').style.display='block'"><?php echo $text['select'];?></button>
             </div>
 
@@ -62,7 +61,7 @@
                         <div class="force-overflow-inputtable">
                             <table id="input_table" class="table w3-table">
                                 <thead id="header-table">
-                                    <tr class="w3-dark-grey" style="font-size: 2.8vmin">
+                                    <tr class="w3-dark-grey" style="font-size: 2.6vmin">
                                         <th width="60%"><?php echo $text['event'];?></th>
                                         <th style="display: none;">2</th>
                                         <th style="display: none;">3</th>
@@ -88,7 +87,7 @@
                         </div>
                     </div>
 
-                    <div class="footer">
+                    <div class="footer" id='input_menu'>
                         <div class="buttonbox">
                             <?php $buttonstatus = count($data['job_list_new']) ==  0 ? 'disabled' : ''; ?>
                             <input id="S1" name="New_Submit" type="button" value="<?php echo $text['New'];?>" tabindex="1" onclick="crud_job_event('new')">
@@ -104,28 +103,32 @@
                 <!-- Table Data Information -->
                 <div id="TableDataInput" style="display: none" class="table-container">
                     <div id="Event_List" style="margin-top: 10px;background-color: #F2F2D9;">
-                        <div class="w3-border-bottom" style="font-size: 20px;"><?php echo $text['Event_List'];?></div>
-                        <table class="table w3-table-all table" style="font-size: 2.5vmin">
+                        <div class="w3-border-bottom" style="font-size: 20px;">Event List</div>
+                        <table class="table w3-table-all w3-hoverable" style="font-size: 2.5vmin">
                             <tr>
                                 <td class="w3-left-align">1-50 SW Job ID</td>
-                                <td class="w3-left-align">101 <?php echo $array[101]; ?></td>
-                                <td class="w3-left-align">102 <?php echo $array[102];?></td>
-                                <td class="w3-left-align">103 <?php echo $array[103];?></td>
-                                <td class="w3-left-align">104 <?php echo $array[104];?></td>
+                                <td class="w3-left-align">101 <?php echo $text['disable'];?></td>
+                                <td class="w3-left-align">102 <?php echo $text['enable'];?></td>
                             </tr>
                             <tr>
-                                <td class="w3-left-align">105 <?php echo $array[105];?></td>
-                                <td class="w3-left-align">106 <?php echo $array[106];?></td>
-                                <td class="w3-left-align">107 <?php echo $array[107];?></td>
-                                <td class="w3-left-align">108 <?php echo $array[108];?></td>
-                                <td class="w3-left-align">109 <?php echo $array[109];?></td>
+                                <td class="w3-left-align">103 <?php echo $text['Clear'];?></td>
+                                <td class="w3-left-align">104 <?php echo $text['Confirm'];?></td>                             
+                                <td class="w3-left-align">105 <?php echo $text['Start-IN'];?></td>
                             </tr>
                             <tr>
-                                <td class="w3-left-align">110 <?php echo $array[110];?></td>
-                                <td class="w3-left-align">111 <?php echo $array[111];?></td>
-                                <td class="w3-left-align">112 <?php echo $array[112];?></td>
-                                <td class="w3-left-align">113 <?php echo $array[113];?></td>
-                                <td class="w3-left-align">114 <?php echo $array[114];?></td>
+                                <td class="w3-left-align">106 <?php echo $text['Unscrew(Remote)'];?></td>
+                                <td class="w3-left-align">107 <?php echo $text['Sequence Clear'];?></td>
+                                <td class="w3-left-align">108 <?php echo $text['Reboot'];?></td>
+                            </tr>
+                            <tr>
+                                <td class="w3-left-align">109 <?php echo $text['Gate Once'];?></td>
+                                <td class="w3-left-align">110 <?php echo $text['UDEFINE'];?>1</td>
+                                <td class="w3-left-align">111 <?php echo $text['UDEFINE'];?>2</td>
+                            </tr>
+                            <tr>
+                                <td class="w3-left-align">112 <?php echo $text['UDEFINE'];?>3</td>
+                                <td class="w3-left-align">113 <?php echo $text['UDEFINE'];?>4</td>
+                                <td class="w3-left-align">114 <?php echo $text['UDEFINE'];?>5</td>
                             </tr>
                         </table>                            
                     </div>
@@ -145,56 +148,53 @@
                             <h3 id='modal_title'><?php echo $text['new_event'];?></h3>
                         </header>
 
-                        <div class="scrollbar-newInput" id="style-newInput">
-                            <div class="force-overflow-newInput">
-                                <div class="modal-body">
-                                    <form id="new_input_form" style="padding-left: 5%">
-                                        <div class="row">
-                                            <div for="event" class="col-3 t1"><?php echo $text['event'];?> :</div>
-                                            <div class="col-2 t2">
-                                                <select id="Event_Option" name ="Event_Option" class="col custom-file">
-                                                    <option value="-1" disabled selected><?php echo $text['Choose_option']; ?></option>
-                                                        <?php foreach($data['event'] as $key =>$val){?>
-                                                            <option value ='<?php echo $key;?>'><?php echo $text[$val];?></option>
-                                                        <?php } ?>
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <?php for($i = 2; $i <= 12; $i++){?>     
-                                            <div class="row input-pin">
-                                                <div class="col-2 t1" style="margin-left: 5%"><?php echo $i; ?>:</div>
-                                                <div class="col t2">
-                                                    <div class="col-4 form-check form-check-inline">
-                                                        <input class="zoom form-check-input" type="radio" name="pin_option" id="pin<?php echo $i; ?>_high" value="1">
-                                                        <label class="form-check-label" for="pin<?php echo $i; ?>_high"><img src="./img/high.png"></label>
-                                                    </div>
-                                                    <div class="form-check form-check-inline">
-                                                        <input class="zoom form-check-input" type="radio" name="pin_option" id="pin<?php echo $i; ?>_low" value="0">
-                                                        <label class="form-check-label" for="pin<?php echo $i; ?>_low"><img src="./img/low.png"></label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        <?php } ?>
-                                        <div id="work_goc" style="display: none;">
-                                            <div class="row" style="display: flex; align-items: center;">
-                                                <div class="col t1"><?php echo $text['gate_confirm'];?>:</div>
-                                                <div class="col t2">
-                                                    <div class="col form-check form-check-inline">
-                                                        <input class="form-check-input" type="radio" name="gateconfirm" id="gateconfirm_0" value="0" checked="">
-                                                        <label class="form-check-label"><?php echo $text['NO'];?></label>
-                                                    </div>
-                                                    <div class="form-check form-check-inline">
-                                                        <input class="form-check-input" type="radio" name="gateconfirm" id="gateconfirm_1" value="1">
-                                                        <label class="form-check-label"><?php echo $text['YES'];?></label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </form>
+                        <div class="modal-body">
+                            <form id="new_input_form" style="padding-left: 5%">
+                                <div class="row">
+                                    <div for="event" class="col-3 t1"><?php echo $text['event'];?> :</div>
+                                    <div class="col-2 t2">
+                                        <select id="Event_Option" name ="Event_Option" class="col custom-file">
+                                            <option value="-1" disabled selected><?php echo $text['Choose_option']; ?></option>
+                                                <?php foreach($data['event'] as $key =>$val){?>
+                                                    <option value ='<?php echo $key;?>'><?php echo $text[$val];?></option>
+                                                <?php } ?>
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>
+
+                                <?php for($i = 2; $i <= 12; $i++){?>     
+                                    <div class="row input-pin">
+                                        <div class="col-2 t1" style="margin-left: 5%"><?php echo $i; ?>:</div>
+                                        <div class="col t2">
+                                            <div class="col-4 form-check form-check-inline">
+                                                <input class="zoom form-check-input" type="radio" name="pin_option" id="pin<?php echo $i; ?>_high" value="1">
+                                                <label class="form-check-label" for="pin<?php echo $i; ?>_high"><img src="./img/high.png"></label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="zoom form-check-input" type="radio" name="pin_option" id="pin<?php echo $i; ?>_low" value="0">
+                                                <label class="form-check-label" for="pin<?php echo $i; ?>_low"><img src="./img/low.png"></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php } ?>
+                                <div id="work_goc" style="display: none;">
+                                    <div class="row" style="display: flex; align-items: center;">
+                                        <div class="col t1"><?php echo $text['gate_confirm'];?>:</div>
+                                        <div class="col t2">
+                                            <div class="col form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="gateconfirm" id="gateconfirm_0" value="0" checked="">
+                                                <label class="form-check-label"><?php echo $text['NO'];?></label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="gateconfirm" id="gateconfirm_1" value="1">
+                                                <label class="form-check-label"><?php echo $text['YES'];?></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
+
                         <div class="modal-footer justify-content-center">
                             <button id="" class="button-modal" onclick="create_input_id()"><?php echo $text['save'];?></button>
                             <button id="" class="button-modal" onclick="closebutton('newinput')" class="closebtn"><?php echo $text['close'];?></button>
@@ -213,54 +213,55 @@
                                 class="w3-button w3-red w3-display-topright" style="width: 50px; margin: 3px;">&times;</span>
                             <h3 id='modal_title'><?php echo $text['edit_event'];?></h3>
                         </header>
-                        <div class="scrollbar-newInput" id="style-newInput">
-                            <div class="force-overflow-newInput">
-                                <div class="modal-body">
-                                    <form id="new_input_form" style="padding-left: 5%">
-                                        <div class="row">
-                                            <div for="event" class="col-3 t1"><?php echo $text['event'];?>:</div>
-                                            <div class="col-2 t2">
-                                                <select id="edit_Event_Option" name ="edit_Event_Option" class="col custom-file" disabled>
-                                                    <?php foreach($data['event'] as $key =>$val){?>
-                                                        <option value ='<?php echo $key;?>'><?php echo $text[$val];?></option>
-                                                    <?php } ?>
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <?php for ($i = 2; $i <= 12; $i++){?>
-                                            <div class="row input-pin">
-                                                <div class="col-2 t1" style="margin-left: 5%"><?php echo $i; ?>:</div>
-                                                <div class="col t2">
-                                                    <div class="col-4 form-check form-check-inline">
-                                                        <input class="zoom form-check-input" type="radio" name="edit_pin_option" id="edit_pin<?php echo $i; ?>_high" value="1">
-                                                        <label class="form-check-label" for="edit_pin<?php echo $i; ?>_high"><img src="./img/high.png"></label>
-                                                    </div>
-                                                    <div class="form-check form-check-inline">
-                                                        <input class="zoom form-check-input" type="radio" name="edit_pin_option" id="edit_pin<?php echo $i; ?>_low" value="0">
-                                                        <label class="form-check-label" for="edit_pin<?php echo $i; ?>_low"><img src="./img/low.png"></label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        <?php } ?>
-                                        <div id="edit_work_goc" style="display: none;">
-                                            <div class="row" style="display: flex; align-items: center;">
-                                                <div class="col t1"><?php echo $text['gate_confirm'];?>:</div>
-                                                <div class="col t2">
-                                                    <div class="col form-check form-check-inline">
-                                                        <input class="form-check-input" type="radio" name="edit_gateconfirm" id="edit_gateconfirm_0" value="0">
-                                                        <label class="form-check-label"><?php echo $text['NO'];?></label>
-                                                    </div>
-                                                    <div class="form-check form-check-inline">
-                                                        <input class="form-check-input" type="radio" name="edit_gateconfirm" id="edit_gateconfirm_1"  value="1">
-                                                        <label class="form-check-label"><?php echo $text['YES'];?></label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </form>
+                      
+                        <div class="modal-body">
+                            <form id="new_input_form" style="padding-left: 5%">
+                                <div class="row">
+                                    <div for="event" class="col-3 t1"><?php echo $text['event'];?>:</div>
+                                    <div class="col-2 t2">
+                                        <select id="edit_Event_Option" name ="edit_Event_Option" class="col custom-file" disabled>
+                                            <?php foreach($data['event'] as $key =>$val){?>
+                                                <option value ='<?php echo $key;?>'><?php echo $text[$val];?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>
+
+                                <?php for ($i = 2; $i <= 12; $i++){?>
+                                    <div class="row input-pin">
+                                        <div class="col-2 t1" style="margin-left: 5%"><?php echo $i; ?>:</div>
+                                        <div class="col t2">
+                                            <div class="col-4 form-check form-check-inline">
+                                                <input class="zoom form-check-input" type="radio" name="edit_pin_option" id="edit_pin<?php echo $i; ?>_high" value="1">
+                                                <label class="form-check-label" for="edit_pin<?php echo $i; ?>_high"><img src="./img/high.png"></label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="zoom form-check-input" type="radio" name="edit_pin_option" id="edit_pin<?php echo $i; ?>_low" value="0">
+                                                <label class="form-check-label" for="edit_pin<?php echo $i; ?>_low"><img src="./img/low.png"></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php } ?>
+                                <div id="edit_work_goc" style="display: none;">
+                                    <div class="row" style="display: flex; align-items: center;">
+                                        <div class="col t1"><?php echo $text['gate_confirm'];?>:</div>
+                                        <div class="col t2">
+                                            <div class="col form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="edit_gateconfirm" id="edit_gateconfirm_0" value="0">
+                                                <label class="form-check-label"><?php echo $text['NO'];?></label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="edit_gateconfirm" id="edit_gateconfirm_1"  value="1">
+                                                <label class="form-check-label"><?php echo $text['YES'];?></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                
+                                <input type="hidden" id="old_input_event" name="old_input_event" value="">
+
+                            </form>
                         </div>
 
                         <div class="modal-footer justify-content-center">
@@ -303,15 +304,14 @@
                 				    <div class="row">
                 				        <label for="to_step_id" class="t1 col-4 col-form-label"><?php echo $text['job'];?> :</label>
                 				        <div class="t2 col-6">
-                                        <select id="JobSelect1" class="col custom-file" style="margin: center; width: 153px">
+                                            <select id="JobSelect1" class="col custom-file" style="margin: center; width: 153px">
                                             <option value="-1" disabled selected><?php echo $text['Choose_option']; ?></option>
-                                            <?php foreach($data['job_list'] as $kk => $vv){?>
-                                                <option id ='job_list_option' value="<?php echo $vv['JOBID']; ?>">
-                                                    <?php echo $vv['JOBID'] . " - " . $vv['JOBname']; ?>
-                                                </option>
-                                            <?php } ?>
-                                        </select>
-
+                                                <?php foreach($data['job_list'] as $kk => $vv){?>
+                                                    <option id ='job_list_option' value="<?php echo $vv['job_id']; ?>">
+                                                        <?php echo $vv['job_id'] . " - " . $vv['job_name']; ?>
+                                                    </option>
+                                                <?php } ?>
+                                             </select>
                 				        </div>
                 				    </div>
                 			    </div>
@@ -337,6 +337,8 @@
 </div>
 
 <?php require_once '../app/views/input/input_share.php';?>
+
+
 
 <style>
 #modal-overlay {
@@ -370,7 +372,6 @@
       el.classList.add('unified');
     } else {
       // 沒值就維持原色（如果之前被加過 class 就移除）
-      el.value = '';
       el.classList.remove('unified');
     }
   });

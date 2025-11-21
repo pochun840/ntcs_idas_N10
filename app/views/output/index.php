@@ -22,7 +22,7 @@
                 <input type="text" id="job_id" name="job_id" size="8" maxlength="20" value="" disabled
                     style="height:30px; font-size:2.5vmin; text-align: center; background-color: #DDDDDD; border:0; line-height:30px;">
 
-                <button id="Button_Select" type="button" onclick="document.getElementById('JobSelect').style.display='block'"
+                <button id="Button_Select" type="button" 
                         style="height:30px;width:100px; font-size:2.5vmin; line-height:30px; padding: 0; vertical-align: middle; margin-top: -10px;">
                     <?php echo $text['select'];?>
                 </button>
@@ -60,10 +60,10 @@
             <!---./img/signal02.png單一週期 -->
             <!---./img/trigger.png起子trigger觸發-->
             <div id="TableOutputSetting">
-                <div class="table-container">
+                <div class="table-output">
                     <div class="scrollbar" id="style-outputtable">
                         <div class="scrollbar-force-overflow">
-                            <table id="output_table" class="table w3-table">
+                            <table id="output_table" class="table w3-table-all w3-hoverable">
                                 <thead class="header-table">
                                     <tr class="w3-dark-grey">
                                         <th><?php echo $text['event'];?></th>
@@ -163,7 +163,7 @@
                                 <div class="row">
                                     <div for="event" class="col-3 t1"><?php echo $text['event'];?> :</div>
                                     <div class="col-2 t2">
-                                        <select id="edit_event_option" name='edit_event_option' class="col custom-file grey-disabled"  disabled>
+                                        <select id="edit_event_option" name='edit_event_option' class="col custom-file grey-disabled">
                                            <?php foreach($data['event_output'] as $key =>$val){?>
                                                 <option value ='<?php echo $key;?>'><?php echo $text[$val];?></option>
                                             <?php } ?>
@@ -197,6 +197,8 @@
                         </div>
 
                         <div class="modal-footer justify-content-center">
+                            <input type="hidden" id="old_output_event">
+                            <input type="hidden" id="old_output_pin">
                             <button id="" class="button-modal" onclick="edit_output_id()"><?php echo $text['save'];?></button>
                             <button id="" class="button-modal" onclick="closebutton('edit_output')" class="closebtn"><?php echo $text['close'];?></button>
                         </div>

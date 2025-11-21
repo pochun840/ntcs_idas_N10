@@ -1,9 +1,10 @@
+
+
+<link rel="stylesheet" href="<?php echo URLROOT; ?>css/tcc_output_m.css" type="text/css">
 <?php
   // 從控制器帶進來的值
   $focusedJobId = isset($data['focused_jobid']) ? $data['focused_jobid'] : null;
 ?>
-
-<link rel="stylesheet" href="<?php echo URLROOT; ?>css/output_m.css" type="text/css">
 
 <div class="container-ms">
     <div class="w3-text-white w3-center">
@@ -18,54 +19,56 @@
     <div class="main-content">
         <div class="center-content">
             <div class="topnav">
-                <label style="font-size:18px;color: #000; padding-left: 2%" for="job_id"><?php echo $text['job_id'];?> :</label>&nbsp;
-                <input type="text" id="job_id" name="job_id" size="8" maxlength="20" value="" disabled style="height:30px; font-size:18px;text-align: center; background-color: #DDDDDD; border:0;">&nbsp;&nbsp;
-                <button id="Button_Select" class="w3-button w3-border w3-round-large" type="button" onclick="document.getElementById('JobSelect').style.display='block'"><?php echo $text['select'];?></button>
+                <label style="font-size:3vmin;color: #000; padding-left: 2%" for="job_id"><?php echo $text['job_id'];?> :</label>&nbsp;
+                <input type="text" id="job_id" name="job_id" size="8" maxlength="20" value="1" disabled style="height:30px; font-size:3.2vmin;text-align: center; background-color: #DDDDDD; border:0;">&nbsp;&nbsp;
+                <button id="Button_Select" type="button" ><?php echo $text['select'];?></button>
             </div>
 
             <!-- Job Select Modal -->
-            <div id="JobSelect" class="modal" style="width: 70%; top: 13%;">
-                <form class="w3-modal-content w3-card-4 w3-animate-zoom" action="">
-                    <div class="w3-light-grey">
-                        <header class="w3-container w3-dark-grey" style="height: 48px">
-                            <span onclick="document.getElementById('JobSelect').style.display='none'" class="w3-button w3-red w3-large w3-display-topright" style="margin: 2px">&times;</span>
-                            <h3 style="margin: 5px"><?php echo $text['job_select'];?></h3>
-                        </header>
-                        <table id="Job_Select">
-                            <tr>
-                                <td>
-                                    <select style="margin: center" id="JobNameSelect" name="JobNameSelect" size="200">
-                                        <?php foreach($data['job_list'] as $key =>$val){?>
-                                            <option value="<?php echo $val['JOBID'];?>"><?php echo $val['JOBname'];?></option>
-                                        <?php }?>                                                                                                                                
-                                    </select>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                    <div class="modal-footer justify-content-center w3-dark-grey" style="height: 48px">
-                        <button id="select_confirm" type="button" class="btn btn-primary" onclick='job_confirm()'><?php echo $text['confirm'];?></button>
-                        <button id="select_close" type="button" class="btn btn-secondary" onclick="document.getElementById('JobSelect').style.display='none'"><?php echo $text['close'];?></button>
-                    </div>
-                </form>
+             <div id="JobSelect" class="modal" style="width: 70%; top: 13%;">
+                <div class="modal-dialog modal-lg">
+                    <form class="modal-content w3-animate-zoom" action="">
+                        <div class="w3-light-grey">
+                            <header class="w3-container w3-dark-grey" style="height: 48px">
+                                <span onclick="document.getElementById('JobSelect').style.display='none'" class="w3-button w3-red w3-large w3-display-topright" style="margin: 2px">&times;</span>
+                                <h3 style="margin: 5px"><?php echo $text['job_select'];?></h3>
+                            </header>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-12 t2 px-3"> <!-- col-12 cho toàn dòng, px-3 để có khoảng cách ngang -->
+                                        <select id="JobNameSelect" name="JobNameSelect" disabled>
+                                            <?php foreach($data['job_list'] as $key => $val) { ?>
+                                                <option value="<?php echo $val['JOBID']; ?>"><?php echo $val['JOBname']; ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>    
+                        </div>
+                        <div class="modal-footer justify-content-center w3-dark-grey" style="height: 48px">
+                            <button id="select_confirm" type="button" class="btn btn-primary" onclick='job_confirm()'><?php echo $text['confirm'];?></button>
+                            <button id="select_close" type="button" class="btn btn-secondary" onclick="document.getElementById('JobSelect').style.display='none'" ><?php echo $text['close'];?></button>
+                        </div>
+                    </form>
+                </div>    
             </div>
 
-            <!-- Table Output -->
+            <!-- Table Input -->
             <div id="TableOutputSetting">
                 <div class="table-container">
                     <div class="scrollbar" id="style-outputtable">
                         <div class="force-overflow">
                             <table id="output_table" class="table w3-table">
                                 <thead id="header-table">
-                                    <tr class="w3-dark-grey" style="font-size: 2.8vmin">
+                                    <tr class="w3-dark-grey" style="font-size: 2.6vmin">
                                         <th class="w3-center"><?php echo $text['event'];?></th>
                                         <th class="w3-center">Pin</th>
                                         <th class="w3-center"></th>
                                         <th class="w3-center"><?php echo $text['time'];?></th>
                                     </tr>
-                                </thead>
+                               </thead>
 
-                                <tbody style="font-size: 2.6vmin;text-align: center;" id="output_jobid_select">
+                                <tbody style="font-size: 2.6vmin;text-align: center;" id="output_jobid_select" >
                                 </tbody>
                             </table>
                         </div>
@@ -78,7 +81,7 @@
                         <input id="S2" name="Edit_Submit" type="button" value="<?php echo $text['Edit'];?>" tabindex="1"     onclick="crud_job_event('edit')">
                         <input id="S3" name="Copy_Submit" type="button" value="<?php echo $text['Copy'];?>" tabindex="1"     onclick="crud_job_event('copy')">
                         <input id="S4" name="Delete_Submit" type="button" value="<?php echo $text['Delete'];?>" tabindex="1" onclick="crud_job_event('del')">
-                        <input id="S6" name="Align_Submit" type="button" value="<?php echo $text['Align'];?>" tabindex="1"   onclick="crud_job_event('unified')">
+                        <input id="S6" name="Align_Submit" type="button" value="<?php echo $text['Align'];?>" tabindex="1" onclick="crud_job_event('unified')">
                     </div>
                 </div>
             </div>
@@ -93,22 +96,21 @@
                             <h3 id='modal_title'><?php echo $text['new_event'];?></h3>
                         </header>
 
-                        <div class="scrollbar-newOutput" id="style-newOutput">
-                            <div class="force-overflow-newOutput">
-                                <div class="modal-body">
-                                    <form id="new_output_from" style="padding-left: 1%; padding-right: 1%">
-                                        <div class="row">
-                                            <div for="event" class="col-3 t1"><?php echo $text['event'];?> :</div>
-                                            <div class="col-3 t2">
-                                                <select id="Event_Option" class="col custom-file">
-                                                <option value="-1" disabled selected><?php echo $text['Choose_option']; ?></option>
-                                                    <?php foreach($data['event_output'] as $key =>$val){?>
-                                                        <option value ='<?php echo $key;?>'><?php echo $text[$val];?></option>
-                                                    <?php } ?>
-                                                </select>
-                                            </div>
-                                        </div>
-
+                        <div class="modal-body" id="new_output">
+                            <form id="new_output_from" style="padding-left: 1%; padding-right: 1%">
+                                <div class="row">
+                                    <div for="event" class="col-3 t1"><?php echo $text['event'];?> :</div>
+                                    <div class="col-3 t2">
+                                        <select id="Event_Option" class="col custom-file">
+                                        <option value="-1" disabled selected><?php echo $text['Choose_option']; ?></option>
+                                           	<?php foreach($data['event_output'] as $key =>$val){?>
+                                                <option value ='<?php echo $key;?>'><?php echo $text[$val];?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="newEvent-scrollbar" id="style-newEvent">
+                                    <div class="newEvent-force-overflow">
                                         <?php for ($i = 1; $i <= 11; $i++) {?>
                                             <div class="row output-pin">
                                                 <div class="col t1"><?php echo $i;?>:</div>
@@ -129,9 +131,9 @@
                                                 </div>
                                             </div>
                                         <?php } ?>
-                                    </form>
+                                    </div>
                                 </div>
-                            </div>
+                            </form>
                         </div>
 
                         <div class="modal-footer justify-content-center">
@@ -152,50 +154,49 @@
                             <h3 id='modal_title'><?php echo $text['edit_event'];?></h3>
                         </header>
 
-                        <div class="scrollbar-newOutput" id="style-newOutput">
-                            <div class="force-overflow-newOutput">
-                                <div class="modal-body" id="new_output">
-                                    <form id="new_output_from" style="padding-left: 1%; padding-right: 1%">
-                                        <div class="row">
-                                            <div for="event" class="col-3 t1"><?php echo $text['event'];?> :</div>
-                                            <div class="col-2 t2">
-                                                <select id="edit_event_option" name='edit_event_option' class="col custom-file grey-disabled" >
-                                                <option value="-1" disabled selected><?php echo $text['Choose_option']; ?></option>
-                                                <?php foreach($data['event_output'] as $key =>$val){?>
-                                                        <option value ='<?php echo $key;?>'><?php echo $text[$val];?></option>
-                                                    <?php } ?>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <?php for ($i = 1; $i <= 11; $i++) {?>
-                                            <div class="row output-pin">
-                                                <div class="col t1"><?php echo $i;?>:</div>
-                                                <div class="col t2 form-check form-check-inline">
-                                                    <input class="zoom form-check-input" type="radio" name="edit_pin_option"  id="edit_pin<?php echo $i; ?>_0" value="0" onclick="toggleOnputTime_edit('edit_pin<?php echo $i; ?>_0', this.checked,'1')"  >
-                                                    <label class="form-check-label" for="pin1_signal01"><img src="./img/signal01.png"></label>
-                                                </div>
-                                                <div class="col t2 form-check form-check-inline">
-                                                    <input class="zoom form-check-input" type="radio" name="edit_pin_option" id="edit_pin<?php echo $i; ?>_1" value="1" onclick="toggleOnputTime_edit('edit_pin<?php echo $i; ?>_1', this.checked,'2')" >
-                                                    <label class="form-check-label" for="pin1_signal02"><img src="./img/signal02.png"></label>
-                                                </div>
-                                                <div class="col t2 form-check form-check-inline">
-                                                    <input class="zoom form-check-input" type="radio" name="edit_pin_option" id="edit_pin<?php echo $i; ?>_2" value="2" onclick="toggleOnputTime_edit('edit_pin<?php echo $i; ?>_2', this.checked,'3')" >
-                                                    <label class="form-check-label" for="pin1_trigger"><img src="./img/trigger.png"></label>
-                                                </div>
-                                                <div class="col-3 t2">
-                                                    <input type="text" class="t4 form-control" id="edit_time<?php echo $i; ?>" placeholder="ms" value="" >
-                                                </div>
-                                            </div>
-                                            
-                                        <?php } ?>
-                                    </form>
+                        <div class="modal-body" id="new_output">
+                            <form id="new_output_from" style="padding-left: 1%; padding-right: 1%">
+                                <div class="row">
+                                    <div for="event" class="col-3 t1"><?php echo $text['event'];?> :</div>
+                                    <div class="col-2 t2">
+                                        <select id="edit_event_option" name='edit_event_option' class="col custom-file grey-disabled" >
+                                        <option value="-1" disabled selected><?php echo $text['Choose_option']; ?></option>
+                                           <?php foreach($data['event_output'] as $key =>$val){?>
+                                                <option value ='<?php echo $key;?>'><?php echo $text[$val];?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>
+								<?php for ($i = 1; $i <= 11; $i++) {?>
+
+									<div class="row output-pin">
+										<div class="col t1"><?php echo $i;?>:</div>
+										<div class="col t2 form-check form-check-inline">
+											<input class="zoom form-check-input" type="radio" name="edit_pin_option"  id="edit_pin<?php echo $i; ?>_0" value="0" onclick="toggleOnputTime_edit('edit_pin<?php echo $i; ?>_0', this.checked,'1')"  >
+											<label class="form-check-label" for="pin1_signal01"><img src="./img/signal01.png"></label>
+										</div>
+										<div class="col t2 form-check form-check-inline">
+											<input class="zoom form-check-input" type="radio" name="edit_pin_option" id="edit_pin<?php echo $i; ?>_1" value="1" onclick="toggleOnputTime_edit('edit_pin<?php echo $i; ?>_1', this.checked,'2')" >
+											<label class="form-check-label" for="pin1_signal02"><img src="./img/signal02.png"></label>
+										</div>
+										<div class="col t2 form-check form-check-inline">
+											<input class="zoom form-check-input" type="radio" name="edit_pin_option" id="edit_pin<?php echo $i; ?>_2" value="2" onclick="toggleOnputTime_edit('edit_pin<?php echo $i; ?>_2', this.checked,'3')" >
+											<label class="form-check-label" for="pin1_trigger"><img src="./img/trigger.png"></label>
+										</div>
+										<div class="col-3 t2">
+											<input type="text" class="t4 form-control" id="edit_time<?php echo $i; ?>" placeholder="ms" value="" >
+										</div>
+                                	</div>
+									
+								<?php } ?>
+                            </form>
                         </div>
 
                         <div class="modal-footer justify-content-center">
-                            <button class="button-modal" onclick="edit_output_id()"><?php echo $text['save'];?></button>
-                            <button class="button-modal" onclick="closebutton('edit_output')" class="closebtn"><?php echo $text['close'];?></button>
+                            <input type="hidden" id="old_output_event">
+                            <input type="hidden" id="old_output_pin">
+                            <button id="" class="button-modal" onclick="edit_output_id()"><?php echo $text['save'];?></button>
+                            <button id="" class="button-modal" onclick="closebutton('edit_output')" class="closebtn"><?php echo $text['close'];?></button>
                         </div>
                     </div>
                 </div>
@@ -304,6 +305,8 @@
         padding: 10px;
     }
 </style>
+
+
 
 <script>
   document.addEventListener('DOMContentLoaded', function () {

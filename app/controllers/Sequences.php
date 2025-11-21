@@ -70,10 +70,10 @@ class Sequences extends Controller
 
     public function Add_Sequence($job_id, $type_id = '1')
     {
-        // $file = $this->MiscellaneousModel->lang_load();
-        // if(!empty($file)){
-        //     include $file;
-        // }
+        $file = $this->MiscellaneousModel->lang_load();
+        if(!empty($file)){
+             include $file;
+        }
 
         // Lấy SEQID tiếp theo
         $head_seq_id = $this->sequenceModel->get_head_seq_id($job_id);
@@ -431,17 +431,16 @@ class Sequences extends Controller
         if(!empty($seq_data)){
 
                $seq_data = array(
-                'job_id' => $_POST['job_id'] ?? null,
+                'JOBID' => $_POST['job_id'] ?? null,
                 'SEQID'  => $_POST['seq_id'] ?? null,
                 'SEQname' => $_POST['seq_name'] ?? null,
+                'tool_id' => $_POST['tool_id'] ?? 0,
                 'time' => $_POST['time'] ?? null,
                 'type' => $_POST['type'] ?? null,
                 'act' => $_POST['act'] ?? 0,
                 'skip' => $_POST['skip'] ?? 0,
                 'seq_repeat' => $_POST['tightening_repeat'] ?? null,
                 'timeout' => $_POST['timeout'] ?? null,
-                'dt_time' => $_POST['dt_time'] ?? 0,
-                'tt_time' => $_POST['tt_time'] ?? 0,
                 'ok_seq' => $_POST['ok_seq_val'] ?? null,
                 'ok_stop' => $_POST['ok_stop_val'] ?? null,
                 'countType' =>$_POST['countType'] ?? 1,
@@ -471,14 +470,12 @@ class Sequences extends Controller
                 'dt_time' => $_POST['dt_time'] ?? 0,
                 'tt_time' => $_POST['tt_time'] ?? 0,
                 'total_high_angle' => $_POST['total_angle_limit'] ?? 0,
-                'total_high_angle' => $_POST['total_angle_limit'] ?? 0,
                 'total_angle_lower' => $_POST['total_angle_lower'] ?? 0,
 
             );
 
         }
 
-        var_dump($_POST['seq_type_id']);
 
         echo "<pre>";
         print_r($_POST);
